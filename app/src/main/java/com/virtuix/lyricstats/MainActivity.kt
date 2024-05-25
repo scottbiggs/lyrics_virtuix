@@ -9,10 +9,18 @@ import androidx.compose.runtime.collectAsState
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+
 		val viewModel = MainViewModel()
+
 		setContent {
 			val uiState = viewModel.uiState.collectAsState().value
-			MainScreen.Screen(viewModel = viewModel, uiState = uiState)
+			val errState = viewModel.errState.collectAsState().value
+
+			MainScreen.Screen(
+				viewModel = viewModel,
+				uiState = uiState,
+				errState = errState
+			)
 		}
 	}
 }

@@ -1,5 +1,7 @@
 package com.virtuix.lyricstats
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,15 +12,38 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.getString
+import com.virtuix.lyricstats.ui.ErrState
 import com.virtuix.lyricstats.ui.theme.LyricStatsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 object MainScreen {
+
 	@Composable
-	fun Screen(viewModel: IMainViewModel, uiState: MainUiState) {
+	fun Screen(
+		viewModel: IMainViewModel,
+		uiState: MainUiState,
+		errState: ErrState
+	) {
 		LyricStatsTheme {
+
+			if (errState.errState) {
+				val ctx = LocalContext.current
+
+				// error happened.
+				if (errState.errDescId != 0) {
+					Log.e(TAG, getString(ctx, errState.errDescId))
+				}
+				if (errState.errMsgId != 0) {
+					Toast.makeText(ctx, getString(ctx, errState.errMsgId), Toast.LENGTH_LONG).show()
+				}
+				viewModel.processError()	// recompose without error
+			}
+
+
 			Column(modifier = Modifier.fillMaxSize()) {
 				TextField(
 					value = uiState.artist,
@@ -54,3 +79,5 @@ object MainScreen {
 		}
 	}
 }
+
+const val TAG = "MainScreen"

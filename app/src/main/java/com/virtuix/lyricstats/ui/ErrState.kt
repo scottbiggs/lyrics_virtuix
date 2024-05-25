@@ -5,8 +5,8 @@ package com.virtuix.lyricstats.ui
  * description of the error type suitable for devs
  * and a text message to display to users (if applicable).
  *
- * @param   isErr       This state is only meaningful if set
- *                      to true.
+ * @param   errState    This state is only meaningful if set
+ *                      to true.  When false, there is no error.
  *
  * @param   errDescId   Id of the string that describes the
  *                      error to be used for debugging log message.
@@ -16,7 +16,7 @@ package com.virtuix.lyricstats.ui
  *                      0 means not used.
  */
 data class ErrState(
-    val isErr : Boolean = false,
+    val errState : Boolean = false,
     val errDescId : Int = 0,
     val errMsgId : Int = 0
 )

@@ -25,8 +25,8 @@ class MainViewModel(
 	private val _uiState = MutableStateFlow(MainUiState())
 	val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
-	private val _errSTate = MutableStateFlow(ErrState())
-	val errState: StateFlow<ErrState> = _errSTate.asStateFlow()
+	private val _errState = MutableStateFlow(ErrState(errState = false))
+	val errState: StateFlow<ErrState> = _errState.asStateFlow()
 
 
 
@@ -42,18 +42,18 @@ class MainViewModel(
 
 		// first, check for valid input
 		if (_uiState.value.artist.isBlank()) {
-			_errSTate.update {
+			_errState.update {
 				it.copy(
-					isErr = true,
+					errState = true,
 					errMsgId = R.string.invalid_artist
 				)
 			}
 			return
 		}
 		if (_uiState.value.songTitle.isBlank()) {
-			_errSTate.update {
+			_errState.update {
 				it.copy(
-					isErr = true,
+					errState = true,
 					errMsgId = R.string.invalid_title
 				)
 			}
@@ -70,6 +70,20 @@ class MainViewModel(
 			findLongestWord(lyrics)
 		}
 	}
+
+
+	/**
+	 * Call this after an error has been signaled.  This can be
+	 * used to reset the error condition.
+	 *
+	 * @param	wasErrorHandled		Was the error handled? then set this
+	 * 								to true.  If the error should persist,
+	 * 								this should be false. Defaults to true.
+	 */
+	override fun processError(wasErrorHandled : Boolean) {
+		_errState.update { it.copy(errState = !wasErrorHandled) }
+	}
+
 
 	private fun findLongestWord(lyrics: String) {
 		val longestWord = lyrics.split("\\s+".toRegex()).reduce { longest, current ->
