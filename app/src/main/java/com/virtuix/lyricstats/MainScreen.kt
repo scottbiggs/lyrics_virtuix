@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
 import com.virtuix.lyricstats.ui.ErrState
@@ -79,5 +80,19 @@ object MainScreen {
 		}
 	}
 }
+
+
+@Preview(showSystemUi = true)
+@Composable
+fun MyPreview() {
+	val viewModelPreview = MainViewModelPreview()
+
+	MainScreen.Screen(
+		viewModelPreview,
+		viewModelPreview.uiState,
+		viewModelPreview.errState
+	)
+}
+
 
 const val TAG = "MainScreen"

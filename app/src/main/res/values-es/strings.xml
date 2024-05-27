@@ -8,5 +8,6 @@
     <string name="invalid_artist">Por favor proporcione un nombre de artista</string>
     <string name="invalid_title">Por favor proporcione un título de la canción.</string>
     <string name="unable_to_find">No se puede encontrar a %2s interpretativa de %1s.</string>
+    <string name="timeout">Se agotó el tiempo de espera del servidor de música.</string>
 
 </resources>

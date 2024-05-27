@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.net.SocketTimeoutException
 
 class MainViewModel(
 	private val lyricApi: LyricApi = LyricApiClient.lyricApi,
@@ -68,14 +69,39 @@ class MainViewModel(
 					songTitle = _uiState.value.songTitle
 				)
 			}
-			catch (e : HttpException) {
-				_errState.update {
-					it.copy(
-						errState = true,
-						errMsgId = R.string.unable_to_find,
-						artist = _uiState.value.artist,
-						title = _uiState.value.songTitle
-					)
+
+			catch (e : Exception) {
+				when (e) {
+					is HttpException -> {
+						Log.e(TAG, "HttpException while trying to process lyrics:\n${e.message}")
+						_errState.update {
+							it.copy(
+								errState = true,
+								errMsgId = R.string.unable_to_find,
+								artist = _uiState.value.artist,
+								title = _uiState.value.songTitle
+							)
+						}
+					}
+
+					is SocketTimeoutException -> {
+						Log.e(TAG, "Timeout Exception:\n ${e.message}")
+						_errState.update {
+							it.copy(
+								errState = true,
+								errMsgId = R.string.timeout
+							)
+						}
+					}
+					else -> {
+						Log.e(TAG, "Unknow server error")
+						_errState.update {
+							it.copy(
+								errState = true,
+								errDescId = R.string.unknown_server_exception
+							)
+						}
+					}
 				}
 				return@launch
 			}
@@ -105,6 +131,34 @@ class MainViewModel(
 			if(current.length > longest.length) current else longest
 		}
 		_uiState.update { it.copy(longestWord = longestWord) }
+	}
+
+}
+
+
+/**
+ * Stubb that is used for preview in [MainScreen].  Has no functionality
+ */
+class MainViewModelPreview() : IMainViewModel {
+
+	val uiState = MainUiState()
+	val errState = ErrState()
+
+
+	override fun updateArtist(artist: String) {
+		TODO("Not yet implemented")
+	}
+
+	override fun updateSongTitle(songTitle: String) {
+		TODO("Not yet implemented")
+	}
+
+	override fun lookUpAndProcessLyrics() {
+		TODO("Not yet implemented")
+	}
+
+	override fun processError(wasHandled: Boolean) {
+		TODO("Not yet implemented")
 	}
 
 }

@@ -9,6 +9,7 @@
     <string name="invalid_artist">Please supply an artist name</string>
     <string name="invalid_title">Please supply a song title</string>
     <string name="unable_to_find">Unable to find %1s performing %2s</string>
-
+    <string name="timeout">Music server timed out</string>
+    <string name="unknown_server_exception" translatable="false">Unknown server error</string>
 
 </resources>
