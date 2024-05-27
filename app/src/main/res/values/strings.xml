@@ -5,6 +5,9 @@
     <string name="look_up_and_process_lyrics">Lookup and process lyrics</string>
     <string name="longest_lyric">Longest Lyric: %1s</string>
 
+    <string name="longest_word">Longest word</string>
+    <string name="most_used_word">Most used word</string>
+
     <!-- error messages -->
     <string name="invalid_artist">Please supply an artist name</string>
     <string name="invalid_title">Please supply a song title</string>

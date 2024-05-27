@@ -4,6 +4,9 @@
     <string name="look_up_and_process_lyrics">Buscar y procesar letras</string>
     <string name="longest_lyric">Letras más largas: %1s</string>
 
+    <string name="longest_word">palabra más larga</string>
+    <string name="most_used_word">Palabra más utilizada</string>
+
     <!-- error messages -->
     <string name="invalid_artist">Por favor proporcione un nombre de artista</string>
     <string name="invalid_title">Por favor proporcione un título de la canción.</string>
