@@ -8,5 +8,7 @@
     <!-- error messages -->
     <string name="invalid_artist">Please supply an artist name</string>
     <string name="invalid_title">Please supply a song title</string>
+    <string name="unable_to_find">Unable to find %1s performing %2s</string>
+
 
 </resources>

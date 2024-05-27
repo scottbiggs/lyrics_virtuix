@@ -35,10 +35,10 @@ object MainScreen {
 
 				// error happened.
 				if (errState.errDescId != 0) {
-					Log.e(TAG, getString(ctx, errState.errDescId))
+					Log.e(TAG, errState.getDescString(ctx))
 				}
 				if (errState.errMsgId != 0) {
-					Toast.makeText(ctx, getString(ctx, errState.errMsgId), Toast.LENGTH_LONG).show()
+					Toast.makeText(ctx, errState.getMsgString(ctx), Toast.LENGTH_LONG).show()
 				}
 				viewModel.processError()	// recompose without error
 			}

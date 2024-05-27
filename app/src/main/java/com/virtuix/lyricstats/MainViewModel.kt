@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class MainViewModel(
 	private val lyricApi: LyricApi = LyricApiClient.lyricApi,
@@ -61,10 +62,24 @@ class MainViewModel(
 		}
 
 		ioScope.launch {
-			val response = lyricApi.lyrics(
-				artist = _uiState.value.artist,
-				songTitle = _uiState.value.songTitle
-			)
+			val response = try {
+				lyricApi.lyrics(
+					artist = _uiState.value.artist,
+					songTitle = _uiState.value.songTitle
+				)
+			}
+			catch (e : HttpException) {
+				_errState.update {
+					it.copy(
+						errState = true,
+						errMsgId = R.string.unable_to_find,
+						artist = _uiState.value.artist,
+						title = _uiState.value.songTitle
+					)
+				}
+				return@launch
+			}
+
 			val lyrics = response.lyrics
 			Log.d(TAG,"Raw lyrics: $lyrics")
 			findLongestWord(lyrics)

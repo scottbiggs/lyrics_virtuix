@@ -7,5 +7,6 @@
     <!-- error messages -->
     <string name="invalid_artist">Veuillez fournir un nom d\'artiste</string>
     <string name="invalid_title">Veuillez fournir un titre de chanson</string>
+    <string name="unable_to_find">Impossible de trouver %2s du spectacle %1s</string>
 
 </resources>
