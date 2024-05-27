@@ -1,4 +1,4 @@
-package com.virtuix.lyricstats.ui
+package com.virtuix.lyricstats
 
 import android.content.Context
 

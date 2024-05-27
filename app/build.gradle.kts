@@ -1,6 +1,7 @@
 plugins {
 	id("com.android.application")
 	id("org.jetbrains.kotlin.android")
+	kotlin("plugin.serialization") version "1.5.0"
 }
 
 android {
@@ -62,6 +63,8 @@ dependencies {
 	implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
+
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
 
 	testImplementation("junit:junit:4.13.2")
 	androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")

@@ -2,7 +2,6 @@ package com.virtuix.lyricstats
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.virtuix.lyricstats.ui.ErrState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
