@@ -29,10 +29,6 @@ class MainViewModel(
 	private val _errState = MutableStateFlow(ErrState(errState = false))
 	val errState: StateFlow<ErrState> = _errState.asStateFlow()
 
-	// todo: use this!!
-	private val _currentWord = MutableStateFlow("")
-	val currentWord: StateFlow<String> = _currentWord
-
 	// todo: implement this!
 	private val _currentDefinition = MutableStateFlow("")
 	val currentDefinition: StateFlow<String> = _currentDefinition
@@ -47,7 +43,20 @@ class MainViewModel(
 		_uiState.update { it.copy(songTitle = songTitle) }
 	}
 
+	/**
+	 * When the processing changes, let the viewmodel know here.
+	 *
+	 * @param	choice		True -> process to find the most common word
+	 * 						False -> process to find the longest word (default)
+	 */
+	override fun updateProcessChoice(choice: Boolean) {
+		_uiState.update { it.copy(processChoice = choice) }
+		lookUpAndProcessLyrics()
+	}
+
 	override fun lookUpAndProcessLyrics() {
+
+		// todo:  check to see if anything has changed since the last api call
 
 		// first, check for valid input
 		if (_uiState.value.artist.isBlank()) {
@@ -115,7 +124,14 @@ class MainViewModel(
 
 			val lyrics = response.lyrics
 			Log.d(TAG,"Raw lyrics: $lyrics")
-			findLongestWord(lyrics)
+
+			// finally process the lyrics!
+			if (_uiState.value.processChoice) {
+				findMostCommonWord(lyrics)
+			}
+			else {
+				findLongestWord(lyrics)
+			}
 		}
 	}
 
@@ -137,6 +153,7 @@ class MainViewModel(
 		val longestWord = lyrics.split("\\s+".toRegex()).reduce { longest, current ->
 			if(current.length > longest.length) current else longest
 		}
+		Log.i(TAG, "findLongestWord() -> $longestWord")
 		_uiState.update { it.copy(currentWord = longestWord) }
 	}
 
@@ -146,11 +163,46 @@ class MainViewModel(
 	 * is most commonly used.
 	 *
 	 * side effect:
-	 * 		currentWord		Will hold the most commonly used
-	 * 						word in the given lyrics.
+	 * 		_uiState.currentWord	Will hold the most commonly used
+	 * 								word in the given lyrics.
 	 */
 	private fun findMostCommonWord(lyrics: String) {
-		// todo
+
+		//
+		// method:
+		// 		- create a list of all the words
+		//		- turn the list into a hashmap where the
+		//		  value is the number of times a word appears
+		//		- find the word (which is the key) with the greatest value
+		//
+		//	O(n) speed (unless the hash function is really bad, which'll make it O(n^2))
+		//	O(n) size
+
+		val wordList = lyrics.split("\\s+".toRegex())
+
+		val hashMap = mutableMapOf<String, Int>()
+		for (word in wordList) {
+			if (hashMap.containsKey(word)) {
+				hashMap.put(word, hashMap.getValue(word) + 1)
+			}
+			else {
+				hashMap.put(word, 1)
+			}
+		}
+
+		var mostCommonWord = ""
+		var mostCommonWordCount = 0
+
+		for ((key, value) in hashMap) {
+			if (value > mostCommonWordCount) {
+				mostCommonWord = key
+				mostCommonWordCount = value
+			}
+		}
+
+		// save this (side effect!) in our flow
+		Log.i(TAG, "findMostCommonWord() -> $mostCommonWord")
+		_uiState.update { it.copy(currentWord = mostCommonWord) }
 	}
 
 }
@@ -181,4 +233,7 @@ class MainViewModelPreview() : IMainViewModel {
 		TODO("Not yet implemented")
 	}
 
+	override fun updateProcessChoice(choice: Boolean) {
+		TODO("Not yet implemented")
+	}
 }

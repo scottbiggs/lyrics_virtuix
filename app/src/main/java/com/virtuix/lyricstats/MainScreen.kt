@@ -114,6 +114,7 @@ object MainScreen {
 							.padding(start = 8.dp, end = 8.dp),
 						onCheckedChange = {
 							wordProcessChoice = it
+							viewModel.updateProcessChoice(wordProcessChoice)
 						}
 					)
 
