@@ -29,6 +29,14 @@ class MainViewModel(
 	private val _errState = MutableStateFlow(ErrState(errState = false))
 	val errState: StateFlow<ErrState> = _errState.asStateFlow()
 
+	// todo: use this!!
+	private val _currentWord = MutableStateFlow("")
+	val currentWord: StateFlow<String> = _currentWord
+
+	// todo: implement this!
+	private val _currentDefinition = MutableStateFlow("")
+	val currentDefinition: StateFlow<String> = _currentDefinition
+
 
 
 	override fun updateArtist(artist: String) {
@@ -129,7 +137,20 @@ class MainViewModel(
 		val longestWord = lyrics.split("\\s+".toRegex()).reduce { longest, current ->
 			if(current.length > longest.length) current else longest
 		}
-		_uiState.update { it.copy(longestWord = longestWord) }
+		_uiState.update { it.copy(currentWord = longestWord) }
+	}
+
+
+	/**
+	 * Goes through the given string and figures out which word
+	 * is most commonly used.
+	 *
+	 * side effect:
+	 * 		currentWord		Will hold the most commonly used
+	 * 						word in the given lyrics.
+	 */
+	private fun findMostCommonWord(lyrics: String) {
+		// todo
 	}
 
 }

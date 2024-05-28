@@ -107,6 +107,6 @@ This is the only time i really feel alive
 		subject.lookUpAndProcessLyrics()
 		advanceUntilIdle()
 
-		assertEquals("everything", subject.uiState.value.longestWord)
+		assertEquals("everything", subject.uiState.value.currentWord)
 	}
 }

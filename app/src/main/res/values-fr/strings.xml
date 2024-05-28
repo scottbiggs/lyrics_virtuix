@@ -2,8 +2,10 @@
     <string name="artist">Artiste</string>
     <string name="song_title">Titre de la Chanson</string>
     <string name="look_up_and_process_lyrics">Rechercher et traiter les paroles</string>
-    <string name="longest_lyric">Parole la plus longue: %1s</string>
+    <string name="current_longest_label">Mot le plus long: %1s</string>
+    <string name="current_most_used_label">Plus utilisé: %1s</string>
 
+    <!-- for the switch widget -->
     <string name="longest_word">Mot le plus long</string>
     <string name="most_used_word">Mot le plus utilisé</string>
 
