@@ -1,9 +1,12 @@
-package com.virtuix.lyricstats
+package com.virtuix.lyricstats.apis.lyric
 
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-interface LyricApi {
+/**
+ * Defines the interface for the api to get lyrics.
+ */
+interface LyricApiInterface {
 
 	/**
 	 * GETs lyrics for the given artist and song.

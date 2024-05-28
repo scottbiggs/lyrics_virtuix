@@ -1,4 +1,4 @@
-package com.virtuix.lyricstats.dictionary
+package com.virtuix.lyricstats.apis.dictionary
 
 /**
  * Use this to check a words for their meaning, parts of speech, etc.

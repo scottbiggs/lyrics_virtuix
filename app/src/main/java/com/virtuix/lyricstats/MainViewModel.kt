@@ -2,6 +2,11 @@ package com.virtuix.lyricstats
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.virtuix.lyricstats.apis.dictionary.DictionaryApiClient
+import com.virtuix.lyricstats.apis.dictionary.DictionaryApiInterface
+import com.virtuix.lyricstats.apis.dictionary.DictionaryEntry
+import com.virtuix.lyricstats.apis.lyric.LyricApiInterface
+import com.virtuix.lyricstats.apis.lyric.LyricApiClient
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,12 +16,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import retrofit2.Response
 import java.net.SocketTimeoutException
 
 class MainViewModel(
-	private val lyricApi: LyricApi = LyricApiClient.lyricApi,
+	private val lyricApi: LyricApiInterface = LyricApiClient.lyricApi,
+	private val dictApi: DictionaryApiInterface = DictionaryApiClient.dictionaryApi,
 	ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-): ViewModel(), IMainViewModel {
+) : ViewModel(), IMainViewModel {
 
 	companion object {
 		private const val TAG = "MainViewModel"
@@ -155,12 +162,42 @@ class MainViewModel(
 	}
 
 
-	private fun findLongestWord(lyrics: String) {
-		val longestWord = lyrics.split("\\s+".toRegex()).reduce { longest, current ->
-			if(current.length > longest.length) current else longest
+	/**
+	 * Given a string the probably contains a bunch of words, extract
+	 * all the words from it.
+	 *
+	 * NOTE
+	 * 		Some things that we don't normally call words will be
+	 * 		included in this list.  Numbers, strings of non-alphanumeric
+	 * 		characters, and more will be considered a word by this
+	 * 		function.
+	 */
+	private fun getWordsFromString(bigString : String) : List<String> {
+		return bigString.split("\\s+".toRegex()).map { word ->
+			word.replace("""^[,\.]|[,\.]$""".toRegex(), "")
 		}
+	}
+
+
+	/**
+	 * Only called within the coroutine that is looking up & processing the word.
+	 */
+	private suspend fun findLongestWord(lyrics: String) {
+
+		val longestWord = getWordsFromString(lyrics).reduce { longest, current ->
+			if (current.length > longest.length)
+				current
+			else
+				longest
+		}
+
+//		val longestWord = lyrics.split("\\s+".toRegex()).reduce { longest, current ->
+//			if(current.length > longest.length) current else longest
+//		}
 		Log.i(TAG, "findLongestWord() -> $longestWord")
 		_uiState.update { it.copy(currentWord = longestWord) }
+
+		_uiState.update { it.copy(definition = getDefinition(longestWord)) }
 	}
 
 
@@ -168,11 +205,13 @@ class MainViewModel(
 	 * Goes through the given string and figures out which word
 	 * is most commonly used.
 	 *
+	 * Only called within the coroutine that is looking up & processing the word.
+	 *
 	 * side effect:
 	 * 		_uiState.currentWord	Will hold the most commonly used
 	 * 								word in the given lyrics.
 	 */
-	private fun findMostCommonWord(lyrics: String) {
+	private suspend fun findMostCommonWord(lyrics: String) {
 
 		//
 		// method:
@@ -184,7 +223,7 @@ class MainViewModel(
 		//	O(n) speed (unless the hash function is really bad, which'll make it O(n^2))
 		//	O(n) size
 
-		val wordList = lyrics.split("\\s+".toRegex())
+		val wordList = getWordsFromString(lyrics)
 
 		val hashMap = mutableMapOf<String, Int>()
 		for (word in wordList) {
@@ -209,6 +248,42 @@ class MainViewModel(
 		// save this (side effect!) in our flow
 		Log.i(TAG, "findMostCommonWord() -> $mostCommonWord")
 		_uiState.update { it.copy(currentWord = mostCommonWord) }
+
+		_uiState.update { it.copy(definition = getDefinition(mostCommonWord)) }
+	}
+
+
+	/**
+	 * Finds the definition of a word.
+	 *
+	 * @return	The most common (first) definition of the word.
+	 * 			Empty string if no definition can be found.
+	 *
+	 * NOTE:  Uses the dictionaryapi.dev, so this needs to be called
+	 * within a coroutine to avoid blocking the main thread.
+	 */
+	private suspend fun getDefinition(word : String) : String {
+		// todo: make sure that this caches properly (may be called often)
+
+		val response = try {
+			dictApi.dictLookup(word)
+		}
+		catch (e : Exception) {
+			// todo
+			Log.e(TAG, "todo!!!!")
+		} as Response<List<DictionaryEntry>>
+
+		if (response.isSuccessful) {
+			val responseBody = response.body()
+			if (responseBody != null) {
+				Log.v(TAG, "dictionary -> ${responseBody}")
+				return responseBody[0].meanings[0].definitions[0].definition
+			}
+			// todo error handle the case where we got a successful response
+			// but no body.
+		}
+
+		return ""
 	}
 
 }

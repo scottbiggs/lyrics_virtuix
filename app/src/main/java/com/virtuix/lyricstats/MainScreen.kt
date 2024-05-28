@@ -46,6 +46,9 @@ object MainScreen {
 		/** Variable to control the switch.  True -> Most Used, False -> Longest word */
 		var wordProcessChoice by remember { mutableStateOf(false) }
 
+		/** lets us know when the first process has occurred */
+		var firstLookupOccurred by remember { mutableStateOf(false) }
+
 		val keyboardController = LocalSoftwareKeyboardController.current
 
 		LyricStatsTheme {
@@ -153,6 +156,7 @@ object MainScreen {
 					onClick = {
 						keyboardController?.hide()
 						viewModel::lookUpAndProcessLyrics.invoke()
+						firstLookupOccurred = true
 					},
 					modifier = Modifier
 						.fillMaxWidth()
@@ -163,19 +167,33 @@ object MainScreen {
 
 				//
 				// current word and definition
+				//	- only show when the conditions are just right
 				//
-				val str = if (wordProcessChoice) {
-					stringResource(R.string.current_most_used_label, uiState.currentWord)
+				if ((uiState.thinking == false) and
+					firstLookupOccurred and
+					uiState.artist.isNotBlank() and
+					uiState.songTitle.isNotBlank()) {
+					val str = if (wordProcessChoice) {
+						stringResource(R.string.current_most_used_label, uiState.currentWord)
+					} else {
+						stringResource(R.string.current_longest_label, uiState.currentWord)
+					}
+					Text(
+						text = str,
+						modifier = Modifier
+							.fillMaxWidth()
+							.padding(all = 8.dp)
+					)
+
+					Text(
+						stringResource(
+							R.string.defintion_label, uiState.definition
+						),
+						modifier = Modifier
+							.fillMaxWidth()
+							.padding(all = 8.dp)
+					)
 				}
-				else {
-					stringResource(R.string.current_longest_label, uiState.currentWord)
-				}
-				Text(
-					text = str,
-					modifier = Modifier
-						.fillMaxWidth()
-						.padding(all = 8.dp)
-				)
 
 			}
 

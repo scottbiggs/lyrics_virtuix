@@ -1,5 +1,7 @@
 package com.virtuix.lyricstats
 
+import com.virtuix.lyricstats.apis.lyric.LyricApiInterface
+import com.virtuix.lyricstats.apis.lyric.LyricResponse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -61,7 +63,7 @@ This is the only time i really feel alive
 This is the only time i really feel alive
 """
 	}
-	private val lyricApi = mock<LyricApi>()
+	private val lyricApi = mock<LyricApiInterface>()
 	private val response = LyricResponse(lyrics = LYRICS)
 	private val subject = MainViewModel(lyricApi = lyricApi)
 

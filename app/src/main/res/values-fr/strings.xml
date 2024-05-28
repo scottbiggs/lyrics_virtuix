@@ -4,6 +4,7 @@
     <string name="look_up_and_process_lyrics">Rechercher et traiter les paroles</string>
     <string name="current_longest_label">Mot le plus long: %1s</string>
     <string name="current_most_used_label">Plus utilisé: %1s</string>
+    <string name="defintion_label">Définition: %1s</string>
 
     <!-- for the switch widget -->
     <string name="longest_word">Mot le plus long</string>

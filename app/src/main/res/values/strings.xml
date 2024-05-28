@@ -5,6 +5,7 @@
     <string name="look_up_and_process_lyrics">Lookup and process lyrics</string>
     <string name="current_longest_label">Longest word: %1s</string>
     <string name="current_most_used_label">Most used word: %1s</string>
+    <string name="defintion_label">Definition: %1s</string>
 
     <!-- for the switch widget -->
     <string name="longest_word">Longest word</string>
