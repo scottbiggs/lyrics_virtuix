@@ -10,10 +10,13 @@ package com.virtuix.lyricstats
  * 								False -> process to find longest word
  *
  * @param	currentWord			The word that is the result of the processing.
+ *
+ * @param	thinking			When True, the app is processing (could take a while).
  */
 data class MainUiState(
 	val artist: String = "",
 	val songTitle: String = "",
 	val processChoice: Boolean = false,
-	val currentWord: String = ""
+	val currentWord: String = "",
+	val thinking: Boolean = false
 )

@@ -5,13 +5,16 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -25,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,6 +46,7 @@ object MainScreen {
 		/** Variable to control the switch.  True -> Most Used, False -> Longest word */
 		var wordProcessChoice by remember { mutableStateOf(false) }
 
+		val keyboardController = LocalSoftwareKeyboardController.current
 
 		LyricStatsTheme {
 
@@ -145,7 +150,10 @@ object MainScreen {
 				}
 
 				Button(
-					onClick = viewModel::lookUpAndProcessLyrics,
+					onClick = {
+						keyboardController?.hide()
+						viewModel::lookUpAndProcessLyrics.invoke()
+					},
 					modifier = Modifier
 						.fillMaxWidth()
 						.padding(all = 8.dp)
@@ -164,12 +172,24 @@ object MainScreen {
 				}
 				Text(
 					text = str,
-//					text = stringResource(id = R.string.current_longest_label, uiState.currentWord),
 					modifier = Modifier
 						.fillMaxWidth()
 						.padding(all = 8.dp)
 				)
 
+			}
+
+			// Show the spinner while thinking
+			if (uiState.thinking) {
+				Box(
+					modifier = Modifier.fillMaxSize(),
+					contentAlignment = Alignment.Center,
+				) {
+					CircularProgressIndicator(
+						modifier = Modifier.width(64.dp),
+						color = MaterialTheme.colorScheme.tertiary,
+					)
+				}
 			}
 		}
 	}

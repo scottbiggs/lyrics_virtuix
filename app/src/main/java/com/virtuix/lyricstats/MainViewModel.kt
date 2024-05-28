@@ -29,10 +29,6 @@ class MainViewModel(
 	private val _errState = MutableStateFlow(ErrState(errState = false))
 	val errState: StateFlow<ErrState> = _errState.asStateFlow()
 
-	// todo: implement this!
-	private val _currentDefinition = MutableStateFlow("")
-	val currentDefinition: StateFlow<String> = _currentDefinition
-
 
 
 	override fun updateArtist(artist: String) {
@@ -79,6 +75,10 @@ class MainViewModel(
 		}
 
 		ioScope.launch {
+
+			// signal that processing has begun
+			_uiState.update { it.copy(thinking = true) }
+
 			val response = try {
 				lyricApi.lyrics(
 					artist = _uiState.value.artist,
@@ -119,6 +119,9 @@ class MainViewModel(
 						}
 					}
 				}
+
+				// finish processing and exit
+				_uiState.update { it.copy(thinking = false) }
 				return@launch
 			}
 
@@ -132,6 +135,9 @@ class MainViewModel(
 			else {
 				findLongestWord(lyrics)
 			}
+
+			// processing has finally finished
+			_uiState.update { it.copy(thinking = false) }
 		}
 	}
 
