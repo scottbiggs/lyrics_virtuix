@@ -11,6 +11,8 @@ package com.virtuix.lyricstats
  *
  * @param	currentWord			The word that is the result of the processing.
  *
+ * @param	definition			Definition associated with currentWord.
+ *
  * @param	thinking			When True, the app is processing (could take a while).
  */
 data class MainUiState(
@@ -18,5 +20,6 @@ data class MainUiState(
 	val songTitle: String = "",
 	val processChoice: Boolean = false,
 	val currentWord: String = "",
+	val definition: String = "",
 	val thinking: Boolean = false
 )
