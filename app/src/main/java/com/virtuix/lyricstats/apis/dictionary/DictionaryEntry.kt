@@ -7,4 +7,16 @@ data class DictionaryEntry(
     val phonetics: List<Phonetic>,
     val sourceUrls: List<String>,
     val word: String
-)
+) {
+    //-------------------
+    //  functions to check word type
+    //-------------------
+
+    fun isWord() : Boolean {
+        if (meanings.size == 0) {
+            return false
+        }
+        return true
+    }
+
+}

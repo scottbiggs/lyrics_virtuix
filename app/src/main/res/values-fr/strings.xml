@@ -15,5 +15,6 @@
     <string name="invalid_title">Veuillez fournir un titre de chanson</string>
     <string name="unable_to_find">Impossible de trouver %2s du spectacle %1s</string>
     <string name="timeout">Le serveur de musique a expiré.</string>
+    <string name="no_definition">Impossible de trouver une définition de %1s</string>
 
 </resources>

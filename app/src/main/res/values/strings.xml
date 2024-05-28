@@ -17,5 +17,6 @@
     <string name="unable_to_find">Unable to find %1s performing %2s</string>
     <string name="timeout">Music server timed out</string>
     <string name="unknown_server_exception" translatable="false">Unknown server error</string>
+    <string name="no_definition">Unable to find a definition for %1s</string>
 
 </resources>

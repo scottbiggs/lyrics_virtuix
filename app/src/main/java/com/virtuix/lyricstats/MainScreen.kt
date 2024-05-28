@@ -227,4 +227,4 @@ fun MyPreview() {
 }
 
 
-const val TAG = "MainScreen"
+private const val TAG = "MainScreen"

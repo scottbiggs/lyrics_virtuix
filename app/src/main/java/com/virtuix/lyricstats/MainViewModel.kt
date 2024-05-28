@@ -19,24 +19,32 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.net.SocketTimeoutException
 
+
+private const val TAG = "MainViewModel"
+
 class MainViewModel(
 	private val lyricApi: LyricApiInterface = LyricApiClient.lyricApi,
 	private val dictApi: DictionaryApiInterface = DictionaryApiClient.dictionaryApi,
 	ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel(), IMainViewModel {
 
-	companion object {
-		private const val TAG = "MainViewModel"
-	}
+
+	//------------------------------------------
+	//	class variables
+	//------------------------------------------
 
 	private val ioScope = CoroutineScope(ioDispatcher)
 	private val _uiState = MutableStateFlow(MainUiState())
 	val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
-	private val _errState = MutableStateFlow(ErrState(errState = false))
+	private val _errState = MutableStateFlow(ErrState(errType = ErrStateType.NONE, errState = false))
 	val errState: StateFlow<ErrState> = _errState.asStateFlow()
 
 
+
+	//------------------------------------------
+	//	functions
+	//------------------------------------------
 
 	override fun updateArtist(artist: String) {
 		_uiState.update { it.copy(artist = artist) }
@@ -63,7 +71,7 @@ class MainViewModel(
 
 		// first, check for valid input
 		if (_uiState.value.artist.isBlank()) {
-			_errState.update {
+ 			_errState.update {
 				it.copy(
 					errState = true,
 					errMsgId = R.string.invalid_artist
@@ -185,7 +193,7 @@ class MainViewModel(
 	private suspend fun findLongestWord(lyrics: String) {
 
 		val longestWord = getWordsFromString(lyrics).reduce { longest, current ->
-			if (current.length > longest.length)
+			if ((current.length > longest.length) and (current.contains("--") == false))
 				current
 			else
 				longest
@@ -254,7 +262,19 @@ class MainViewModel(
 
 
 	/**
+	 * Checks the type of a dictionary entry.  If it is an article, preposition,
+	 * interjection, or just not a recognizable word then this will return
+	 * False.  Returns true for all other words found in the dictionary API.
+	 */
+	private suspend fun isLegalWord(entry: DictionaryEntry) : Boolean {
+		return entry.isWord()
+	}
+
+
+	/**
 	 * Finds the definition of a word.
+	 *
+	 * side effects
 	 *
 	 * @return	The most common (first) definition of the word.
 	 * 			Empty string if no definition can be found.
@@ -276,11 +296,26 @@ class MainViewModel(
 		if (response.isSuccessful) {
 			val responseBody = response.body()
 			if (responseBody != null) {
+
+				// fixme:  testing
+				Log.d(TAG, "  legal word($word)? -> ${isLegalWord(responseBody[0])}")
+
+
 				Log.v(TAG, "dictionary -> ${responseBody}")
 				return responseBody[0].meanings[0].definitions[0].definition
 			}
 			// todo error handle the case where we got a successful response
 			// but no body.
+		}
+		else {
+			// Could not find in dictionary api
+			_errState.update {
+				it.copy(
+					errState = true,
+					errMsgId = R.string.defintion_label
+
+				)
+			}
 		}
 
 		return ""
@@ -295,7 +330,7 @@ class MainViewModel(
 class MainViewModelPreview() : IMainViewModel {
 
 	val uiState = MainUiState()
-	val errState = ErrState()
+	val errState = ErrState(ErrStateType.NONE)
 
 
 	override fun updateArtist(artist: String) {
