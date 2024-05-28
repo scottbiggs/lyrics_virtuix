@@ -193,15 +193,12 @@ class MainViewModel(
 	private suspend fun findLongestWord(lyrics: String) {
 
 		val longestWord = getWordsFromString(lyrics).reduce { longest, current ->
-			if ((current.length > longest.length) and (current.contains("--") == false))
+			if ((current.length > longest.length) and (current.contains("---") == false))
 				current
 			else
 				longest
 		}
 
-//		val longestWord = lyrics.split("\\s+".toRegex()).reduce { longest, current ->
-//			if(current.length > longest.length) current else longest
-//		}
 		Log.i(TAG, "findLongestWord() -> $longestWord")
 		_uiState.update { it.copy(currentWord = longestWord) }
 
@@ -267,7 +264,9 @@ class MainViewModel(
 	 * False.  Returns true for all other words found in the dictionary API.
 	 */
 	private suspend fun isLegalWord(entry: DictionaryEntry) : Boolean {
-		return entry.isWord()
+		return entry.isWord() and
+				(entry.isArticle() == false)
+
 	}
 
 

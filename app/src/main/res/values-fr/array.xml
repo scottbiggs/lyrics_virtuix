@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- List of all the articles in French -->
+    <string-array name="articles" tools:ignore="InconsistentArrays">
+        <item>l\'</item>
+        <item>le</item>
+        <item>la</item>
+        <item>les</item>
+        <item>un</item>
+        <item>une</item>
+        <item>des</item>
+        <item>du</item>
+        <item>de la</item>
+        <item>de l\'</item>
+    </string-array>
+
+
+</resources>

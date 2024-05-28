@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- List of all the articles in English -->
+    <string-array name="articles">
+        <item>a</item>
+        <item>an</item>
+        <item>the</item>
+    </string-array>
+
+</resources>

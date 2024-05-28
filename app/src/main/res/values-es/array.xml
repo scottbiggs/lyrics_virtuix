@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- List of all the articles -->
+    <string-array name="articles" tools:ignore="InconsistentArrays">
+        <item>el</item>
+        <item>la</item>
+        <item>los</item>
+        <item>lo</item>
+        <item>las</item>
+    </string-array>
+
+
+</resources>
