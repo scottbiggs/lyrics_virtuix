@@ -1,6 +1,5 @@
 package com.virtuix.lyricstats.apis.dictionary
 
-import android.content.Context
 import android.content.res.Resources.NotFoundException
 import android.util.Log
 import com.virtuix.lyricstats.LyricApp

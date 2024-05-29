@@ -1,5 +1,7 @@
 package com.virtuix.lyricstats
 
+import androidx.compose.ui.text.AnnotatedString
+
 /**
  * @param	artist				The name of the artist
  *
@@ -20,6 +22,6 @@ data class MainUiState(
 	val songTitle: String = "",
 	val processChoice: Boolean = false,
 	val currentWord: String = "",
-	val definition: String = "",
+	val definition: AnnotatedString = AnnotatedString(""),
 	val thinking: Boolean = false
 )

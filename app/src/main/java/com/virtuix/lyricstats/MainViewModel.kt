@@ -1,10 +1,18 @@
 package com.virtuix.lyricstats
 
 import android.util.Log
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import com.virtuix.lyricstats.apis.dictionary.DictionaryApiClient
 import com.virtuix.lyricstats.apis.dictionary.DictionaryApiInterface
-import com.virtuix.lyricstats.apis.dictionary.DictionaryEntry
 import com.virtuix.lyricstats.apis.lyric.LyricApiInterface
 import com.virtuix.lyricstats.apis.lyric.LyricApiClient
 import kotlinx.coroutines.CoroutineDispatcher
@@ -16,7 +24,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import retrofit2.Response
 import java.net.SocketTimeoutException
 
 
@@ -265,19 +272,6 @@ class MainViewModel(
 
 
 	/**
-	 * Checks the type of a dictionary entry.  If it is an article, preposition,
-	 * interjection, or just not a recognizable word then this will return
-	 * False.  Returns true for all other words found in the dictionary API.
-	 */
-	private suspend fun isLegalWord(entry: DictionaryEntry) : Boolean {
-		return entry.isWord() and
-				(entry.isArticle() == false) and
-				(entry.isPreposition() == false) and
-				(entry.isInterjection() == false)
-	}
-
-
-	/**
 	 * Finds the definition of a word.
 	 *
 	 * side effects
@@ -288,7 +282,7 @@ class MainViewModel(
 	 * NOTE:  Uses the dictionaryapi.dev, so this needs to be called
 	 * within a coroutine to avoid blocking the main thread.
 	 */
-	private suspend fun getDefinition(word : String) : String {
+	private suspend fun getDefinition(word : String) : AnnotatedString {
 
 		val response = try {
 			dictApi.dictLookup(word)
@@ -304,15 +298,63 @@ class MainViewModel(
 
 			// finish processing and exit
 			_uiState.update { it.copy(thinking = false) }
-			return ""
-		} as Response<List<DictionaryEntry>>
+			return AnnotatedString("")
+		}
 
 		if (response.isSuccessful) {
-			val responseBody = response.body()
-			if (responseBody != null) {
-				Log.v(TAG, "dictionary -> ${responseBody}")
-				return responseBody[0].meanings[0].definitions[0].definition
+			val responseList = response.body()
+			if (responseList != null) {
+				Log.v(TAG, "dictionary -> ${responseList}")
+
+				//
+				// Create output for all definitions.  Eg "duck"
+				//
+				// duck
+				//    Entry 1
+				//	     meaning 1: verb
+				//		    definition 1 - To quickly lower head...
+				//			definition 2 - To quickly lower (the head...
+				//			...
+				//		meaning 2: noun
+				//			definition 1 - ...
+				//	  Entry 2
+				//		meaning 1: noun
+				//			definition 1 - An aquatic bird...
+				//			definition 2 - ...
+				//
+				//	and so on
+				//
+
+				val fullDef = buildAnnotatedString {
+					withStyle(style = SpanStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold)) {
+						append("$word\n")
+					}
+
+					for ((i, entry) in responseList.withIndex()) {
+						append("  Entry ")
+						append("${i + 1}\n")
+
+						for ((j, meaning) in entry.meanings.withIndex()) {
+							append("    Meaning ")
+							append("${j + 1}: ")
+							withStyle(style = SpanStyle(fontStyle = FontStyle.Italic)) {
+								append("${meaning.partOfSpeech}\n")
+							}
+
+							for ((k, def) in meaning.definitions.withIndex()) {
+								append("      Def ")
+								append("${k + 1} - ")
+								withStyle(style = SpanStyle(fontFamily = FontFamily.Serif)) {
+									append("${def.definition}\n")
+								}
+							}
+						}
+						append("\n")
+					}
+				}
+				return fullDef
 			}
+
 			else {
 				// we got a successful response but no body.
 				_errState.update {
@@ -336,7 +378,7 @@ class MainViewModel(
 			}
 		}
 
-		return ""
+		return AnnotatedString("")
 	}
 
 }
