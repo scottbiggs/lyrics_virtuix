@@ -8,7 +8,73 @@
     </string-array>
 
     <string-array name="prepositions" tools:ignore="InconsistentArrays">
-        <item>a</item>
+        <item>aboard</item>
+        <item>about</item>
+        <item>above</item>
+        <item>abreast</item>
+        <item>across</item>
+        <item>after</item>
+        <item>against</item>
+        <item>along</item>
+        <item>amid</item>
+        <item>among</item>
+        <item>around</item>
+        <item>as</item>
+        <item>astride</item>
+        <item>at</item>
+        <item>atop</item>
+        <item>before</item>
+        <item>beneath</item>
+        <item>beyond</item>
+        <item>beside</item>
+        <item>besides</item>
+        <item>between</item>
+        <item>\'tween</item>
+        <item>beyond</item>
+        <item>by</item>
+        <item>circa</item>
+        <item>ca</item>
+        <item>ca.</item>
+        <item>despite</item>
+        <item>during</item>
+        <item>ere</item>
+        <item>except</item>
+        <item>for</item>
+        <item>from</item>
+        <item>in</item>
+        <item>including</item>
+        <item>into</item>
+        <item>of</item>
+        <item>on</item>
+        <item>onto</item>
+        <item>per</item>
+        <item>pre</item>
+        <item>pro</item>
+        <item>qua</item>
+        <item>re</item>
+        <item>since</item>
+        <item>than</item>
+        <item>through</item>
+        <item>thru</item>
+        <item>thoughout</item>
+        <item>thruout</item>
+        <item>till</item>
+        <item>to</item>
+        <item>toward</item>
+        <item>towards</item>
+        <item>under</item>
+        <item>unlike</item>
+        <item>until</item>
+        <item>unto</item>
+        <item>up</item>
+        <item>upon</item>
+        <item>via</item>
+        <item>vis-à-vis</item>
+        <item>with</item>
+        <item>w/</item>
+        <item>within</item>
+        <item>without</item>
+        <item>w/o</item>
     </string-array>
 
     <string-array name="interjections" tools:ignore="InconsistentArrays">

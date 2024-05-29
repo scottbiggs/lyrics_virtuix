@@ -40,6 +40,8 @@ class MainViewModel(
 	private val _errState = MutableStateFlow(ErrState(errType = ErrStateType.NONE, errState = false))
 	val errState: StateFlow<ErrState> = _errState.asStateFlow()
 
+	/** able to determine if a word is an article, preposition, or interjection */
+	private val wordFilter : FilteredWords by lazy { FilteredWords(LyricApp.context) }
 
 
 	//------------------------------------------
@@ -193,7 +195,9 @@ class MainViewModel(
 	private suspend fun findLongestWord(lyrics: String) {
 
 		val longestWord = getWordsFromString(lyrics).reduce { longest, current ->
-			if ((current.length > longest.length) and (current.contains("---") == false))
+			if ((current.length > longest.length) and
+				(current.contains("---") == false) and
+				(wordFilter.unfiltered(current)))
 				current
 			else
 				longest
@@ -228,7 +232,10 @@ class MainViewModel(
 		//	O(n) speed (unless the hash function is really bad, which'll make it O(n^2))
 		//	O(n) size
 
-		val wordList = getWordsFromString(lyrics)
+		// grab all the words and filter out the articles, preps, and interjections.
+		val wordList = getWordsFromString(lyrics).filter { word ->
+			wordFilter.unfiltered(word)
+		}
 
 		val hashMap = mutableMapOf<String, Int>()
 		for (word in wordList) {
