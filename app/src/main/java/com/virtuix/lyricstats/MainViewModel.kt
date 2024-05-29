@@ -265,8 +265,9 @@ class MainViewModel(
 	 */
 	private suspend fun isLegalWord(entry: DictionaryEntry) : Boolean {
 		return entry.isWord() and
-				(entry.isArticle() == false)
-
+				(entry.isArticle() == false) and
+				(entry.isPreposition() == false) and
+				(entry.isInterjection() == false)
 	}
 
 

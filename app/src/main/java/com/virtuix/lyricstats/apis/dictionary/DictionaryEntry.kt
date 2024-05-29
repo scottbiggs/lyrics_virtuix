@@ -1,6 +1,9 @@
 package com.virtuix.lyricstats.apis.dictionary
 
 import android.content.Context
+import android.content.res.Resources.NotFoundException
+import android.util.Log
+import com.virtuix.lyricstats.LyricApp
 import com.virtuix.lyricstats.R
 
 data class DictionaryEntry(
@@ -10,12 +13,11 @@ data class DictionaryEntry(
     val phonetics: List<Phonetic>,
     val sourceUrls: List<String>,
     val word: String,
-    val ctx : Context
 ) {
 
-    private val articleList : Array<String> = ctx.resources.getStringArray(R.array.articles)
-    private val prepositionList : Array<String> = ctx.resources.getStringArray(R.array.prepositions)
-    private val interjectionList : Array<String> = ctx.resources.getStringArray(R.array.interjections)
+    private var articleList : Array<String>? = null
+    private var prepositionList : Array<String>? = null
+    private var interjectionList : Array<String>? = null
 
 
     //-------------------
@@ -23,17 +25,53 @@ data class DictionaryEntry(
     //-------------------
 
     fun isWord() : Boolean {
-        if (meanings.size == 0) {
+        if (meanings.isEmpty()) {
             return false
         }
         return true
     }
 
     fun isArticle() : Boolean {
-        if (meanings[0].partOfSpeech == "article") {
-            return true
+        if (articleList == null) {
+            articleList = LyricApp.context.resources.getStringArray(R.array.articles)
         }
-        return false
+
+        // Try to find the word in the article list
+        articleList?.let {
+            return it.contains(word)
+        }
+
+        // if we made it this far, this means that articleList is STILL null.
+        Log.e(TAG, "unable to find article list in isArticle()!!! - aborting!")
+        throw NotFoundException()
+    }
+
+    fun isPreposition() : Boolean {
+        if (prepositionList == null) {
+            prepositionList = LyricApp.context.resources.getStringArray(R.array.prepositions)
+        }
+
+        prepositionList?.let {
+            return it.contains(word)
+        }
+        // if we made it this far, this means that articleList is STILL null.
+        Log.e(TAG, "unable to find preposition list in isPreposition()!!! - aborting!")
+        throw NotFoundException()
+    }
+
+    fun isInterjection() : Boolean {
+        if (interjectionList == null) {
+            interjectionList = LyricApp.context.resources.getStringArray(R.array.interjections)
+        }
+
+        interjectionList?.let {
+            return it.contains(word)
+        }
+        // if we made it this far, this means that articleList is STILL null.
+        Log.e(TAG, "unable to find preposition list in isInterjection()!!! - aborting!")
+        throw NotFoundException()
     }
 
 }
+
+const val TAG = "DictionaryEntry"

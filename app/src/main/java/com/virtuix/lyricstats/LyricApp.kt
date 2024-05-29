@@ -1,6 +1,8 @@
 package com.virtuix.lyricstats
 
 import android.app.Application
+import android.content.Context
+import android.content.res.Configuration
 
 /**
  * Deep level application class.  Needed to access strings so
@@ -8,22 +10,28 @@ import android.app.Application
  */
 class LyricApp : Application() {
 
-    lateinit var instance : LyricApp
-        private set
-
 
     override fun onCreate() {
         instance = this
+        context = instance.applicationContext
         super.onCreate()
     }
 
-    /**
-     * Use to get an application context from just about anywhere
-     */
-    fun getContext() = { instance.applicationContext }
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        instance = this
+        context = instance.applicationContext
+        super.onConfigurationChanged(newConfig)
+    }
 
-    /**
-     * Just in case you need an application instance...
-     */
-    fun getInstance() = { instance }
+
+    // todo:
+    // fixme:   whew, talk about smells bad--don't forget to do this right later!
+    companion object {
+        lateinit var instance : LyricApp
+            private set
+
+        lateinit var context : Context
+            private set
+    }
+
 }
