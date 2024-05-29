@@ -14,8 +14,8 @@ data class DictionaryEntry(
 ) {
 
     private val articleList : Array<String> = ctx.resources.getStringArray(R.array.articles)
-    private val prepositionList : Array<String>
-    private val interjectionList : Array<String>
+    private val prepositionList : Array<String> = ctx.resources.getStringArray(R.array.prepositions)
+    private val interjectionList : Array<String> = ctx.resources.getStringArray(R.array.interjections)
 
 
     //-------------------

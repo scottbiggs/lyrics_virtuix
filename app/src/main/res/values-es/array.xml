@@ -10,5 +10,82 @@
         <item>las</item>
     </string-array>
 
+    <string-array name="prepositions" tools:ignore="InconsistentArrays">
+        <item>a</item>
+        <item>ante</item>
+        <item>bajo</item>
+        <item>con</item>
+        <item>contra</item>
+        <item>de</item>
+        <item>desde</item>
+        <item>durante</item>
+        <item>en</item>
+        <item>entre</item>
+        <item>excepto</item>
+        <item>hacia</item>
+        <item>hasta</item>
+        <item>mediante</item>
+        <item>para</item>
+        <item>por</item>
+        <item>según</item>
+        <item>sin</item>
+        <item>sobre</item>
+        <item>tras</item>
+        <item>además de</item>
+        <item>al lado de</item>
+        <item>alrededor de</item>
+        <item>antes de</item>
+        <item>delante de</item>
+        <item>a pesar de</item>
+        <item>cerca de</item>
+        <item>con respecto a</item>
+        <item>de acuerdo con</item>
+        <item>debajo de</item>
+        <item>delante de</item>
+        <item>dentro de</item>
+        <item>encima de</item>
+        <item>en frente a</item>
+        <item>en frente de</item>
+        <item>frenta a</item>
+        <item>frenta de</item>
+        <item>fuera de</item>
+        <item>a excpetión de</item>
+        <item>junto a</item>
+    </string-array>
+
+    <string-array name="interjections" tools:ignore="InconsistentArrays">
+        <item>aguas</item>
+        <item>ajá</item>
+        <item>anda</item>
+        <item>ay</item>
+        <item>caramba</item>
+        <item>caray</item>
+        <item>chale</item>
+        <item>che</item>
+        <item>chin</item>
+        <item>claro</item>
+        <item>dale</item>
+        <item>dios mío</item>
+        <item>fíjate</item>
+        <item>guácala</item>
+        <item>guau</item>
+        <item>güey</item>
+        <item>hala</item>
+        <item>hostia</item>
+        <item>madre mía</item>
+        <item>ojalá</item>
+        <item>olé</item>
+        <item>por dios</item>
+        <item>por supuesto</item>
+        <item>qué barbaridad</item>
+        <item>qué fuerte</item>
+        <item>rayos</item>
+        <item>santo remedio</item>
+        <item>uf</item>
+        <item>uy</item>
+        <item>vale</item>
+        <item>válgame dios</item>
+        <item>ya está</item>
+    </string-array>
 
 </resources>

@@ -15,5 +15,126 @@
         <item>de l\'</item>
     </string-array>
 
+    <string-array name="prepositions" tools:ignore="InconsistentArrays">
+        <item>apres</item>
+        <item>vers</item>
+        <item>depuis</item>
+        <item>pendant</item>
+        <item>pour</item>
+        <item>à</item>
+        <item>à côté de</item>
+        <item>au-dessous</item>
+        <item>autour de</item>
+        <item>chez</item>
+        <item>dans</item>
+        <item>de</item>
+        <item>devant</item>
+        <item>en face de</item>
+        <item>en</item>
+        <item>loin de</item>
+        <item>parmi</item>
+        <item>sous</item>
+        <item>sur</item>
+        <item>vers</item>
+        <item>au</item>
+        <item>aux</item>
+        <item>du</item>
+        <item>des</item>
+        <item>à droite de</item>
+        <item>à gauche de</item>
+        <item>à l\'extérieur de</item>
+        <item>à l\'intérieur de</item>
+        <item>au coin de</item>
+        <item>au-dessous de</item>
+        <item>au-dessus de</item>
+        <item>autour de</item>
+        <item>en arrière de</item>
+        <item>en bas de</item>
+        <item>en dehors de</item>
+        <item>en dessous de</item>
+        <item>en face de</item>
+        <item>en haut de</item>
+        <item>hors de</item>
+        <item>loin de</item>
+        <item>près de</item>
+    </string-array>
+
+    <string-array name="interjections" tools:ignore="InconsistentArrays">
+        <item>zut</item>
+        <item>ouïe</item>
+        <item>beurk</item>
+        <item>chut</item>
+        <item>holà</item>
+        <item>vlan</item>
+        <item>ho</item>
+        <item>toc toc</item>
+        <item>miam</item>
+        <item>ouf</item>
+        <item>gla gla</item>
+        <item>pan</item>
+
+        <item>alours</item>
+        <item>achoum</item>
+        <item>ah</item>
+        <item>aïe</item>
+        <item>argh</item>
+        <item>badaboum</item>
+        <item>bah</item>
+        <item>ben</item>
+        <item>berk</item>
+        <item>beurk</item>
+        <item>bof</item>
+        <item>bouh</item>
+        <item>boum</item>
+        <item>ça alors</item>
+        <item>clac</item>
+        <item>chut</item>
+        <item>eh</item>
+        <item>eh bien</item>
+        <item>eh oui</item>
+        <item>euh</item>
+        <item>flac</item>
+        <item>glouglou</item>
+        <item>ha</item>
+        <item>haha</item>
+        <item>hein</item>
+        <item>hé</item>
+        <item>heu</item>
+        <item>hi</item>
+        <item>hihi</item>
+        <item>hi-hi</item>
+        <item>hic</item>
+        <item>hip hip hourra</item>
+        <item>hmmm</item>
+        <item>hourra</item>
+        <item>hum</item>
+        <item>ma foi</item>
+        <item>mon dieu</item>
+        <item>ouah</item>
+        <item>ouf</item>
+        <item>oh là là</item>
+        <item>oh là là là là</item>
+        <item>ouille</item>
+        <item>ouin</item>
+        <item>pan pan</item>
+        <item>patati patata</item>
+        <item>patatras</item>
+        <item>peuh</item>
+        <item>pinpon pinpon</item>
+        <item>ner-nah ner-nah</item>
+        <item>pouah</item>
+        <item>plouf</item>
+        <item>sacrebleu</item>
+        <item>sacredié</item>
+        <item>sacredieu</item>
+        <item>tac tac</item>
+        <item>tant pis</item>
+        <item>tic-tac</item>
+        <item>toc-toc</item>
+        <item>tratata</item>
+        <item>youpi</item>
+        <item>vlan</item>
+        <item>v\'lan</item>
+    </string-array>
 
 </resources>

@@ -1,10 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- List of all the articles in English -->
-    <string-array name="articles">
+    <string-array name="articles" tools:ignore="InconsistentArrays">
         <item>a</item>
         <item>an</item>
         <item>the</item>
+    </string-array>
+
+    <string-array name="prepositions" tools:ignore="InconsistentArrays">
+        <item>a</item>
+    </string-array>
+
+    <string-array name="interjections" tools:ignore="InconsistentArrays">
+        <item>aha</item>
+        <item>ahem</item>
+        <item>ahoy</item>
+        <item>alas</item>
+        <item>aarg</item>
+        <item>aw</item>
+        <item>bam</item>
+        <item>bingo</item>
+        <item>blah</item>
+        <item>boo</item>
+        <item>brr</item>
+        <item>cheers</item>
+        <item>dang</item>
+        <item>drat</item>
+        <item>duh</item>
+        <item>eek</item>
+        <item>eh</item>
+        <item>fiddlesticks</item>
+        <item>gadzooks</item>
+        <item>gee</item>
+        <item>gee whiz</item>
+        <item>golly</item>
+        <item>goodbuy</item>
+        <item>good-buy</item>
+        <item>goodness</item>
+        <item>good grief</item>
+        <item>gosh</item>
+        <item>haha</item>
+        <item>ha-ha</item>
+        <item>hehe</item>
+        <item>he-he</item>
+        <item>halleluja</item>
+        <item>hello</item>
+        <item>hey</item>
+        <item>hi</item>
+        <item>hmmm</item>
+        <item>holy cow</item>
+        <item>holy smokes</item>
+        <item>huh</item>
+        <item>hunh</item>
+        <item>humph</item>
+        <item>hurray</item>
+        <item>oh</item>
+        <item>oh dear</item>
+        <item>oh my</item>
+        <item>oh well</item>
+        <item>oops</item>
+        <item>ouch</item>
+        <item>ow</item>
+        <item>phew</item>
+        <item>phooey</item>
+        <item>pooh</item>
+        <item>pow</item>
+        <item>shh</item>
+        <item>shhh</item>
+        <item>shoo</item>
+        <item>tut-tut</item>
+        <item>uh-huh</item>
+        <item>uh-hunh</item>
+        <item>uh-oh</item>
+        <item>uh-uh</item>
+        <item>ugh</item>
+        <item>wahoo</item>
+        <item>whoops</item>
+        <item>wow</item>
     </string-array>
 
 </resources>
