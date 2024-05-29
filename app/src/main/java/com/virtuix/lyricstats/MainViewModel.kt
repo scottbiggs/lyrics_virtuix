@@ -34,6 +34,7 @@ class MainViewModel(
 	//------------------------------------------
 
 	private val ioScope = CoroutineScope(ioDispatcher)
+
 	private val _uiState = MutableStateFlow(MainUiState())
 	val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
@@ -68,8 +69,6 @@ class MainViewModel(
 	}
 
 	override fun lookUpAndProcessLyrics() {
-
-		// todo:  check to see if anything has changed since the last api call
 
 		// first, check for valid input
 		if (_uiState.value.artist.isBlank()) {
@@ -290,37 +289,49 @@ class MainViewModel(
 	 * within a coroutine to avoid blocking the main thread.
 	 */
 	private suspend fun getDefinition(word : String) : String {
-		// todo: make sure that this caches properly (may be called often)
 
 		val response = try {
 			dictApi.dictLookup(word)
 		}
 		catch (e : Exception) {
-			// todo
-			Log.e(TAG, "todo!!!!")
+			_errState.update {
+				it.copy(
+					errType = ErrStateType.NONE,
+					errState = true,
+					errMsgId = R.string.dictionary_server_problem,
+				)
+			}
+
+			// finish processing and exit
+			_uiState.update { it.copy(thinking = false) }
+			return ""
 		} as Response<List<DictionaryEntry>>
 
 		if (response.isSuccessful) {
 			val responseBody = response.body()
 			if (responseBody != null) {
-
-				// fixme:  testing
-				Log.d(TAG, "  legal word($word)? -> ${isLegalWord(responseBody[0])}")
-
-
 				Log.v(TAG, "dictionary -> ${responseBody}")
 				return responseBody[0].meanings[0].definitions[0].definition
 			}
-			// todo error handle the case where we got a successful response
-			// but no body.
+			else {
+				// we got a successful response but no body.
+				_errState.update {
+					it.copy(
+						errType = ErrStateType.NONE,
+						errState = true,
+						errMsgId = R.string.dictionary_server_problem,
+					)
+				}
+			}
 		}
 		else {
 			// Could not find in dictionary api
 			_errState.update {
 				it.copy(
+					errType = ErrStateType.WORD,
 					errState = true,
-					errMsgId = R.string.defintion_label
-
+					errMsgId = R.string.defintion_label,
+					word = word
 				)
 			}
 		}
@@ -334,29 +345,24 @@ class MainViewModel(
 /**
  * Stubb that is used for preview in [MainScreen].  Has no functionality
  */
-class MainViewModelPreview() : IMainViewModel {
+class MainViewModelPreview : IMainViewModel {
 
 	val uiState = MainUiState()
 	val errState = ErrState(ErrStateType.NONE)
 
 
 	override fun updateArtist(artist: String) {
-		TODO("Not yet implemented")
 	}
 
 	override fun updateSongTitle(songTitle: String) {
-		TODO("Not yet implemented")
 	}
 
 	override fun lookUpAndProcessLyrics() {
-		TODO("Not yet implemented")
 	}
 
 	override fun processError(wasHandled: Boolean) {
-		TODO("Not yet implemented")
 	}
 
 	override fun updateProcessChoice(choice: Boolean) {
-		TODO("Not yet implemented")
 	}
 }

@@ -24,8 +24,11 @@ class LyricApp : Application() {
     }
 
 
-    // todo:
-    // fixme:   whew, talk about smells bad--don't forget to do this right later!
+    /**
+     * Allows viewmodel to access strings and arrays.  This project
+     * isn't really big enough to warrant moving all the string and
+     * lanuage manipulation to a seperate section with its own context.
+     */
     companion object {
         lateinit var instance : LyricApp
             private set

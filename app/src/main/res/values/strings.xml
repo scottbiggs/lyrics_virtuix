@@ -18,5 +18,6 @@
     <string name="timeout">Music server timed out</string>
     <string name="unknown_server_exception" translatable="false">Unknown server error</string>
     <string name="no_definition">Unable to find a definition for %1s</string>
+    <string name="dictionary_server_problem">Error contacting dictionary</string>
 
 </resources>

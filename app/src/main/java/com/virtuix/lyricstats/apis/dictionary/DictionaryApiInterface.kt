@@ -14,14 +14,14 @@ interface DictionaryApiInterface {
     /**
      * GETs a definition of a word.
      *
-     *      todo!!!
+     *      todo (once localization is supported by the dictionary server)
      * @param	language	@Get - The language abbreviation (en = english)
      *
      * @param	word		@Get - Word to look up
      *
      * @return	A list (with just one item) of dictionary entries
      */
-    // todo: make localiztion work
+    // todo: make localiztion work once the server supports other languages
 //    @GET("https://api.dictionaryapi.dev/api/v2/entries/{language}/{word}")
     @GET("{word}")
     suspend fun dictLookup(@Path("word") word: String): Response<List<DictionaryEntry>>

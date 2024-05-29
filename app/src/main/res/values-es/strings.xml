@@ -16,5 +16,6 @@
     <string name="unable_to_find">No se puede encontrar a %2s interpretativa de %1s.</string>
     <string name="timeout">Se agotó el tiempo de espera del servidor de música.</string>
     <string name="no_definition">No se puede encontrar una definición de %1s</string>
+    <string name="dictionary_server_problem">Error al contactar con el diccionario</string>
 
 </resources>

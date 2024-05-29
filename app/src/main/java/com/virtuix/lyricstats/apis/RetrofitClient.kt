@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitClient {
 	private const val LYRICS_BASE_URL = "https://api.lyrics.ovh/v1/"
 
-	// todo: localization
+	// todo: localization -- this dictionary does not support localization (yet)
 //	private const val DICT_BASE_URL = "https://api.dictionaryapi.dev/api/v2/entries/"
 	private const val DICT_BASE_URL = "https://api.dictionaryapi.dev/api/v2/entries/en/"
 
