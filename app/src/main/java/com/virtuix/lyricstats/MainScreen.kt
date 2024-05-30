@@ -36,7 +36,7 @@ object MainScreen {
 
 	@Composable
 	fun Screen(
-		viewModel: IMainViewModel,
+		viewModel: MainViewModelInterface,
 		uiState: MainUiState,
 		errState: ErrState
 	) {

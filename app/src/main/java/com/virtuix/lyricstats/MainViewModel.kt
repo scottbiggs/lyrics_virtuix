@@ -31,8 +31,9 @@ private const val TAG = "MainViewModel"
 class MainViewModel(
 	private val lyricApi: LyricApiInterface = LyricApiClient.lyricApi,
 	private val dictApi: DictionaryApiInterface = DictionaryApiClient.dictionaryApi,
+	private val lyricApp: LyricApp = LyricApp.instance,
 	ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : ViewModel(), IMainViewModel {
+) : ViewModel(), MainViewModelInterface {
 
 
 	//------------------------------------------
@@ -51,8 +52,7 @@ class MainViewModel(
 	private var currentWord = ""
 
 	/** able to determine if a word is an article, preposition, or interjection */
-	private val wordFilter : FilteredWords by lazy { FilteredWords(LyricApp.context) }
-
+	private val wordFilter : FilteredWords by lazy { FilteredWords(lyricApp.getLyricAppContext()) }
 
 
 	//------------------------------------------

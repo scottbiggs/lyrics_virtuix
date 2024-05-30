@@ -19,6 +19,7 @@ import org.robolectric.RobolectricTestRunner
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 class MainViewModelTest {
+
 	companion object {
 		private const val ARTIST = "Nine Inch Nails"
 		private const val SONG_TITLE = "The Only Time"
@@ -63,6 +64,8 @@ This is the only time i really feel alive
 This is the only time i really feel alive
 """
 	}
+
+	private val lyricApp = mock<LyricAppInterface>()
 	private val lyricApi = mock<LyricApiInterface>()
 	private val response = LyricResponse(lyrics = LYRICS)
 	private val subject = MainViewModel(lyricApi = lyricApi)

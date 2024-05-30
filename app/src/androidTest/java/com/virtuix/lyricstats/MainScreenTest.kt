@@ -18,13 +18,14 @@ class MainScreenTest {
 
 	@get:Rule
 	val testRule = createAndroidComposeRule<ComponentActivity>()
-	private val viewModel = mock<IMainViewModel>()
+	private val viewModel = mock<MainViewModelInterface>()
 	private val uiState = MainUiState()
+	private val errState = ErrState(errType = ErrStateType.NONE)
 
 	@Test
 	fun userCanInputArtist() {
 		testRule.setContent {
-			MainScreen.Screen(viewModel = viewModel, uiState = uiState)
+			MainScreen.Screen(viewModel = viewModel, uiState = uiState, errState = errState)
 		}
 
 		testRule.onNodeWithText(testRule.activity.getString(R.string.artist)).performTextInput(ARTIST)
@@ -35,7 +36,7 @@ class MainScreenTest {
 	@Test
 	fun userCanInputSongTitle() {
 		testRule.setContent {
-			MainScreen.Screen(viewModel = viewModel, uiState = uiState)
+			MainScreen.Screen(viewModel = viewModel, uiState = uiState, errState = errState)
 		}
 
 		testRule.onNodeWithText(testRule.activity.getString(R.string.song_title)).performTextInput(SONG_TITLE)
@@ -46,7 +47,7 @@ class MainScreenTest {
 	@Test
 	fun userProcessLyrics() {
 		testRule.setContent {
-			MainScreen.Screen(viewModel = viewModel, uiState = uiState)
+			MainScreen.Screen(viewModel = viewModel, uiState = uiState, errState = errState)
 		}
 
 		testRule.onNodeWithText(testRule.activity.getString(R.string.look_up_and_process_lyrics)).performClick()

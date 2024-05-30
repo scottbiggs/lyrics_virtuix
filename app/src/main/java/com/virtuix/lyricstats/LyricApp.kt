@@ -23,6 +23,14 @@ class LyricApp : Application() {
         super.onConfigurationChanged(newConfig)
     }
 
+    fun getLyricAppInstance() : LyricApp {
+        return instance
+    }
+
+    fun getLyricAppContext() : Context {
+        return context
+    }
+
 
     /**
      * Allows viewmodel to access strings and arrays.  This project

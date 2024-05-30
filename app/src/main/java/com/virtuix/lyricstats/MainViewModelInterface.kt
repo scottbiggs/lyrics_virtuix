@@ -1,6 +1,6 @@
 package com.virtuix.lyricstats
 
-interface IMainViewModel {
+interface MainViewModelInterface {
 	fun updateArtist(artist: String)
 	fun updateSongTitle(songTitle: String)
 	fun updateProcessChoice(choice: Boolean)
