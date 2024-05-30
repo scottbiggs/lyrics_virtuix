@@ -115,6 +115,7 @@ class MainViewModel(
 		if (composeArtist.isBlank()) {
 			_errState.update {
 				it.copy(
+					errType = ErrStateType.NONE,
 					errState = true,
 					errMsgId = R.string.invalid_artist
 				)
@@ -124,6 +125,7 @@ class MainViewModel(
 		if (composeTitle.isBlank()) {
 			_errState.update {
 				it.copy(
+					errType = ErrStateType.NONE,
 					errState = true,
 					errMsgId = R.string.invalid_title
 				)
@@ -149,6 +151,7 @@ class MainViewModel(
 						Log.e(TAG, "HttpException while trying to process lyrics:\n${e.message}")
 						_errState.update {
 							it.copy(
+								errType = ErrStateType.ARTIST_AND_TITLE,
 								errState = true,
 								errMsgId = R.string.unable_to_find,
 								artist = composeArtist,
@@ -161,6 +164,7 @@ class MainViewModel(
 						Log.e(TAG, "Timeout Exception:\n ${e.message}")
 						_errState.update {
 							it.copy(
+								errType = ErrStateType.NONE,
 								errState = true,
 								errMsgId = R.string.timeout
 							)
@@ -170,6 +174,7 @@ class MainViewModel(
 						Log.e(TAG, "Unknow server error")
 						_errState.update {
 							it.copy(
+								errType = ErrStateType.NONE,
 								errState = true,
 								errDescId = R.string.unknown_server_exception
 							)
