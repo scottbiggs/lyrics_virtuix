@@ -23,17 +23,11 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.virtuix.lyricstats.ui.theme.LyricStatsTheme
 
@@ -42,20 +36,19 @@ object MainScreen {
 
 	@Composable
 	fun Screen(
-		viewModel: IMainViewModel,
-		uiState: MainUiState,
+		viewModel: MainViewModel,
 		errState: ErrState
 	) {
-		/** Variable to control the switch.  True -> Most Used, False -> Longest word */
-		var wordProcessChoice by remember { mutableStateOf(false) }
-
-		/** lets us know when the first process has occurred */
-		var firstLookupOccurred by remember { mutableStateOf(false) }
 
 		val keyboardController = LocalSoftwareKeyboardController.current
 
+		//-------------------
+		//	compose state stuff
+		//-------------------
+
 		LyricStatsTheme {
 
+			// display any necessary toasts
 			if (errState.errState) {
 				val ctx = LocalContext.current
 
@@ -66,7 +59,7 @@ object MainScreen {
 				if (errState.errMsgId != 0) {
 					Toast.makeText(ctx, errState.getMsgString(ctx), Toast.LENGTH_LONG).show()
 				}
-				viewModel.processError()	// recompose without error
+				viewModel.processError(true)	// recompose without error
 			}
 
 
@@ -75,33 +68,58 @@ object MainScreen {
 					.fillMaxSize()
 					.verticalScroll(rememberScrollState())
 			) {
+
+				//
+				// artist textfield
+				//
 				TextField(
-					value = uiState.artist,
-					onValueChange = viewModel::updateArtist,
-					placeholder = { Text(text = stringResource(id = R.string.artist)) },
+					value = viewModel.composeArtist,
+					onValueChange = {
+						viewModel.updateArtist(it)
+					},
+					label = {
+						Text(stringResource(R.string.artist))
+					},
+					placeholder = {
+						Text(stringResource(R.string.artist))
+					},
+					singleLine = true,
 					modifier = Modifier
 						.fillMaxWidth()
-						.padding(all = 8.dp)
+						.padding(8.dp)
 				)
+
+				//
+				// title textfield
+				//
 				TextField(
-					value = uiState.songTitle,
-					onValueChange = viewModel::updateSongTitle,
+					value = viewModel.composeTitle,
+					onValueChange = {
+						viewModel.updateSongTitle(it)
+					},
+					label = { Text(stringResource(R.string.song_title)) },
 					placeholder = { Text(text = stringResource(id = R.string.song_title)) },
 					modifier = Modifier
 						.fillMaxWidth()
 						.padding(all = 8.dp)
 				)
 
-
+				//
+				// switch between display longest word or most common word
+				//
 				Row(
 					modifier = Modifier.fillMaxWidth(),
 					horizontalArrangement = Arrangement.Center
 				) {
+
+					//
+					// text for the left side of switch (false): Longest Word
+					//
 					Text(
 						stringResource(R.string.longest_word),
 						color = MaterialTheme.colorScheme.onSecondary,
 						modifier =
-							if (wordProcessChoice) {
+							if (viewModel.composeDisplayingMostUsedWord) {
 								Modifier
 									.align(Alignment.CenterVertically)
 									.padding(4.dp)
@@ -122,21 +140,26 @@ object MainScreen {
 							}
 					)
 
+					//
+					// the switch itself
 					// checked = most used, unchecked = longest word (default)
+					//
 					Switch(
-						checked = wordProcessChoice,
+						checked = viewModel.composeDisplayingMostUsedWord,
 						modifier = Modifier
 							.padding(start = 8.dp, end = 8.dp),
 						onCheckedChange = {
-							wordProcessChoice = it
-							viewModel.updateProcessChoice(wordProcessChoice)
+							viewModel.updateProcessChoice(it)
 						}
 					)
 
+					//
+					// text for right side of switch (true): Most Used Word
+					//
 					Text(
 						stringResource(R.string.most_used_word),
 						modifier =
-							if (wordProcessChoice) {
+							if (viewModel.composeDisplayingMostUsedWord) {
 								Modifier
 									.align(Alignment.CenterVertically)
 									.background(
@@ -159,11 +182,13 @@ object MainScreen {
 
 				}
 
+				//
+				// button to process the artist & title entries
+				//
 				Button(
 					onClick = {
 						keyboardController?.hide()
 						viewModel::lookUpAndProcessLyrics.invoke()
-						firstLookupOccurred = true
 					},
 					modifier = Modifier
 						.fillMaxWidth()
@@ -176,13 +201,9 @@ object MainScreen {
 				// current word and definition
 				//	- only show when the conditions are just right
 				//
-				if ((uiState.thinking == false) and
-						firstLookupOccurred and
-						uiState.artist.isNotBlank() and
-						uiState.songTitle.isNotBlank()) {
-
+				if (viewModel.composeThinking == false) {
 					Text(
-						uiState.definition,
+						viewModel.composeDefinition,
 						modifier = Modifier
 							.fillMaxWidth()
 							.padding(all = 8.dp)
@@ -192,7 +213,7 @@ object MainScreen {
 			}
 
 			// Show the spinner while thinking
-			if (uiState.thinking) {
+			if (viewModel.composeThinking) {
 				Box(
 					modifier = Modifier.fillMaxSize(),
 					contentAlignment = Alignment.Center,
@@ -205,19 +226,6 @@ object MainScreen {
 			}
 		}
 	}
-}
-
-
-@Preview(showSystemUi = true)
-@Composable
-fun MyPreview() {
-	val viewModelPreview = MainViewModelPreview()
-
-	MainScreen.Screen(
-		viewModelPreview,
-		viewModelPreview.uiState,
-		viewModelPreview.errState
-	)
 }
 
 

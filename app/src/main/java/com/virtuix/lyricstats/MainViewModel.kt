@@ -1,8 +1,10 @@
 package com.virtuix.lyricstats
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -34,6 +36,7 @@ class MainViewModel(
 	private val dictApi: DictionaryApiInterface = DictionaryApiClient.dictionaryApi,
 	ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel(), IMainViewModel {
+//) : ViewModel() {
 
 
 	//------------------------------------------
@@ -42,27 +45,57 @@ class MainViewModel(
 
 	private val ioScope = CoroutineScope(ioDispatcher)
 
-	private val _uiState = MutableStateFlow(MainUiState())
-	val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+//	private val _uiState = MutableStateFlow(MainUiState())
+//	val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
 	private val _errState = MutableStateFlow(ErrState(errType = ErrStateType.NONE, errState = false))
 	val errState: StateFlow<ErrState> = _errState.asStateFlow()
 
+	/** the word to display */
+	private var currentWord = ""
+
 	/** able to determine if a word is an article, preposition, or interjection */
 	private val wordFilter : FilteredWords by lazy { FilteredWords(LyricApp.context) }
 
+	//------------------------------------------
+	//	compose state variables
+	//------------------------------------------
+
+	var composeArtist by mutableStateOf("")
+		private set
+
+	var composeTitle by mutableStateOf("")
+		private set
+
+	var composeThinking by mutableStateOf(false)
+		private set
+
+	var composeDefinition by mutableStateOf(AnnotatedString(""))
+		private set
+
+	var composeDisplayingMostUsedWord by mutableStateOf(false)
+		private set
+
+
+	override fun updateArtist(artist: String) {
+		composeArtist = artist
+	}
+
+	override fun updateSongTitle(songTitle: String) {
+		composeTitle = songTitle
+	}
 
 	//------------------------------------------
 	//	functions
 	//------------------------------------------
 
-	override fun updateArtist(artist: String) {
-		_uiState.update { it.copy(artist = artist) }
-	}
+//	override fun updateArtist(artist: String) {
+//		_uiState.update { it.copy(artist = artist) }
+//	}
 
-	override fun updateSongTitle(songTitle: String) {
-		_uiState.update { it.copy(songTitle = songTitle) }
-	}
+//	override fun updateSongTitle(songTitle: String) {
+//		_uiState.update { it.copy(songTitle = songTitle) }
+//	}
 
 	/**
 	 * When the processing changes, let the viewmodel know here.
@@ -71,14 +104,15 @@ class MainViewModel(
 	 * 						False -> process to find the longest word (default)
 	 */
 	override fun updateProcessChoice(choice: Boolean) {
-		_uiState.update { it.copy(processChoice = choice) }
+		composeDisplayingMostUsedWord = choice
 		lookUpAndProcessLyrics()
 	}
+
 
 	override fun lookUpAndProcessLyrics() {
 
 		// first, check for valid input
-		if (_uiState.value.artist.isBlank()) {
+		if (composeArtist.isBlank()) {
  			_errState.update {
 				it.copy(
 					errState = true,
@@ -87,7 +121,7 @@ class MainViewModel(
 			}
 			return
 		}
-		if (_uiState.value.songTitle.isBlank()) {
+		if (composeTitle.isBlank()) {
 			_errState.update {
 				it.copy(
 					errState = true,
@@ -100,12 +134,12 @@ class MainViewModel(
 		ioScope.launch {
 
 			// signal that processing has begun
-			_uiState.update { it.copy(thinking = true) }
+			composeThinking = true
 
 			val response = try {
 				lyricApi.lyrics(
-					artist = _uiState.value.artist,
-					songTitle = _uiState.value.songTitle
+					artist = composeArtist,
+					songTitle = composeTitle
 				)
 			}
 
@@ -117,8 +151,8 @@ class MainViewModel(
 							it.copy(
 								errState = true,
 								errMsgId = R.string.unable_to_find,
-								artist = _uiState.value.artist,
-								title = _uiState.value.songTitle
+								artist = composeArtist,
+								title = composeTitle
 							)
 						}
 					}
@@ -144,7 +178,7 @@ class MainViewModel(
 				}
 
 				// finish processing and exit
-				_uiState.update { it.copy(thinking = false) }
+				composeThinking = false
 				return@launch
 			}
 
@@ -152,7 +186,7 @@ class MainViewModel(
 			Log.d(TAG,"Raw lyrics: $lyrics")
 
 			// finally process the lyrics!
-			if (_uiState.value.processChoice) {
+			if (composeDisplayingMostUsedWord) {
 				findMostCommonWord(lyrics)
 			}
 			else {
@@ -160,7 +194,7 @@ class MainViewModel(
 			}
 
 			// processing has finally finished
-			_uiState.update { it.copy(thinking = false) }
+			composeThinking = false
 		}
 	}
 
@@ -210,9 +244,9 @@ class MainViewModel(
 		}
 
 		Log.i(TAG, "findLongestWord() -> $longestWord")
-		_uiState.update { it.copy(currentWord = longestWord) }
 
-		_uiState.update { it.copy(definition = getDefinition(longestWord)) }
+		currentWord = longestWord
+		composeDefinition = getDefinition(longestWord)
 	}
 
 
@@ -265,9 +299,8 @@ class MainViewModel(
 
 		// save this (side effect!) in our flow
 		Log.i(TAG, "findMostCommonWord() -> $mostCommonWord")
-		_uiState.update { it.copy(currentWord = mostCommonWord) }
-
-		_uiState.update { it.copy(definition = getDefinition(mostCommonWord)) }
+		currentWord = mostCommonWord
+		composeDefinition = getDefinition(mostCommonWord)
 	}
 
 
@@ -297,7 +330,7 @@ class MainViewModel(
 			}
 
 			// finish processing and exit
-			_uiState.update { it.copy(thinking = false) }
+			composeThinking = false
 			return AnnotatedString("")
 		}
 
