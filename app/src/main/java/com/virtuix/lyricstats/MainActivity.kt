@@ -14,10 +14,12 @@ class MainActivity : ComponentActivity() {
 		super.onCreate(savedInstanceState)
 
 		setContent {
+			val uiState = viewModel.uiState.collectAsState().value
 			val errState = viewModel.errState.collectAsState().value
 
 			MainScreen.Screen(
 				viewModel,
+				uiState,
 				errState
 			)
 		}

@@ -36,7 +36,8 @@ object MainScreen {
 
 	@Composable
 	fun Screen(
-		viewModel: MainViewModel,
+		viewModel: IMainViewModel,
+		uiState: MainUiState,
 		errState: ErrState
 	) {
 
@@ -73,7 +74,7 @@ object MainScreen {
 				// artist textfield
 				//
 				TextField(
-					value = viewModel.composeArtist,
+					value = uiState.artist,
 					onValueChange = {
 						viewModel.updateArtist(it)
 					},
@@ -93,7 +94,7 @@ object MainScreen {
 				// title textfield
 				//
 				TextField(
-					value = viewModel.composeTitle,
+					value = uiState.songTitle,
 					onValueChange = {
 						viewModel.updateSongTitle(it)
 					},
@@ -119,7 +120,7 @@ object MainScreen {
 						stringResource(R.string.longest_word),
 						color = MaterialTheme.colorScheme.onSecondary,
 						modifier =
-							if (viewModel.composeDisplayingMostUsedWord) {
+							if (uiState.processChoice) {
 								Modifier
 									.align(Alignment.CenterVertically)
 									.padding(4.dp)
@@ -145,7 +146,7 @@ object MainScreen {
 					// checked = most used, unchecked = longest word (default)
 					//
 					Switch(
-						checked = viewModel.composeDisplayingMostUsedWord,
+						checked = uiState.processChoice,
 						modifier = Modifier
 							.padding(start = 8.dp, end = 8.dp),
 						onCheckedChange = {
@@ -159,7 +160,7 @@ object MainScreen {
 					Text(
 						stringResource(R.string.most_used_word),
 						modifier =
-							if (viewModel.composeDisplayingMostUsedWord) {
+							if (uiState.processChoice) {
 								Modifier
 									.align(Alignment.CenterVertically)
 									.background(
@@ -201,9 +202,9 @@ object MainScreen {
 				// current word and definition
 				//	- only show when the conditions are just right
 				//
-				if (viewModel.composeThinking == false) {
+				if (uiState.thinking == false) {
 					Text(
-						viewModel.composeDefinition,
+						uiState.definition,
 						modifier = Modifier
 							.fillMaxWidth()
 							.padding(all = 8.dp)
@@ -213,7 +214,7 @@ object MainScreen {
 			}
 
 			// Show the spinner while thinking
-			if (viewModel.composeThinking) {
+			if (uiState.thinking) {
 				Box(
 					modifier = Modifier.fillMaxSize(),
 					contentAlignment = Alignment.Center,
