@@ -153,8 +153,8 @@ class MainViewModel(
 					}
 				}
 
-				// finish processing and exit
-				_uiState.update { it.copy(thinking = false) }
+				// finish processing and exit (after clearing any lingering definitions)
+				_uiState.update { it.copy(thinking = false, definition = AnnotatedString("")) }
 				return@launch
 			}
 
