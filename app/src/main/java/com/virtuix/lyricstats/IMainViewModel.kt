@@ -14,5 +14,5 @@ interface IMainViewModel {
 	 * 								to true.  If the error should persist,
 	 * 								this should be false. Defaults to true.
 	 */
-	fun processError(wasHandled: Boolean = true)
+	fun processError(wasErrorHandled: Boolean = true)
 }

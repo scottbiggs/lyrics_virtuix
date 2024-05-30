@@ -113,7 +113,7 @@ class MainViewModel(
 
 		// first, check for valid input
 		if (composeArtist.isBlank()) {
- 			_errState.update {
+			_errState.update {
 				it.copy(
 					errState = true,
 					errMsgId = R.string.invalid_artist
@@ -414,30 +414,4 @@ class MainViewModel(
 		return AnnotatedString("")
 	}
 
-}
-
-
-/**
- * Stubb that is used for preview in [MainScreen].  Has no functionality
- */
-class MainViewModelPreview : IMainViewModel {
-
-	val uiState = MainUiState()
-	val errState = ErrState(ErrStateType.NONE)
-
-
-	override fun updateArtist(artist: String) {
-	}
-
-	override fun updateSongTitle(songTitle: String) {
-	}
-
-	override fun lookUpAndProcessLyrics() {
-	}
-
-	override fun processError(wasHandled: Boolean) {
-	}
-
-	override fun updateProcessChoice(choice: Boolean) {
-	}
 }
