@@ -17,5 +17,6 @@
     <string name="timeout">Le serveur de musique a expiré.</string>
     <string name="no_definition">Impossible de trouver une définition de %1s</string>
     <string name="dictionary_server_problem">Erreur lors du contact avec le dictionnaire</string>
+    <string name="not_a_word">%1s n\'est pas un mot.</string>
 
 </resources>

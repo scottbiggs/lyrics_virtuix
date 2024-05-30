@@ -405,13 +405,13 @@ class MainViewModel(
 				it.copy(
 					errType = ErrStateType.WORD,
 					errState = true,
-					errMsgId = R.string.defintion_label,
+					errMsgId = R.string.not_a_word,
 					word = word
 				)
 			}
 		}
 
-		return AnnotatedString("")
+		return AnnotatedString(word)
 	}
 
 }

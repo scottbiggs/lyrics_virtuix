@@ -17,5 +17,6 @@
     <string name="timeout">Se agotó el tiempo de espera del servidor de música.</string>
     <string name="no_definition">No se puede encontrar una definición de %1s</string>
     <string name="dictionary_server_problem">Error al contactar con el diccionario</string>
+    <string name="not_a_word">%1s no es una palabra.</string>
 
 </resources>

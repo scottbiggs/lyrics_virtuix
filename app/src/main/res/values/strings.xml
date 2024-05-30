@@ -19,5 +19,6 @@
     <string name="unknown_server_exception" translatable="false">Unknown server error</string>
     <string name="no_definition">Unable to find a definition for %1s</string>
     <string name="dictionary_server_problem">Error contacting dictionary</string>
+    <string name="not_a_word">%1s is not a word.</string>
 
 </resources>
