@@ -6,7 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 
-
+/**
+ * solution for the virtuix programming challenge
+ * 		by scott morgan biggs
+ */
 class MainActivity : ComponentActivity() {
 	private val viewModel by viewModels<MainViewModel>()
 
