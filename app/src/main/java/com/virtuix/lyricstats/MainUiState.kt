@@ -27,5 +27,5 @@ data class MainUiState(
 	val currentWord: String = "",
 	val definition: AnnotatedString = AnnotatedString(""),
 	val thinking: Boolean = false,
-	val wordList: List<String> = listOf()
+	val wordList: Set<String> = setOf()
 )

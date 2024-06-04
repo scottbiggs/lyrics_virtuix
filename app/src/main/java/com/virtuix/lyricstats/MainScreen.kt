@@ -1,41 +1,36 @@
 package com.virtuix.lyricstats
 
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LifecycleCoroutineScope
+import com.virtuix.lyricstats.ui.WordBox
 import com.virtuix.lyricstats.ui.theme.LyricStatsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -154,7 +149,7 @@ object MainScreen {
 					ThinkingSpinner()
 				}
 				else {
-					WordList(viewModel, uiState)
+					ShowWordList(viewModel, uiState)
 					ShowWordAndDefinition(uiState)
 				}
 
@@ -253,22 +248,32 @@ fun ShowWordAndDefinition(uiState : MainUiState) {
  * that word is displayed.
  */
 @Composable
-fun WordList(viewModel: MainViewModelInterface, uiState: MainUiState) {
+fun ShowWordList(viewModel: MainViewModelInterface, uiState: MainUiState) {
 
-	if (uiState.currentWord.isNotBlank()) {
+//	Log.d(TAG, "word -> ${uiState.currentWord}")
+//	Log.d(TAG, "word list -> ${uiState.wordList}")
 
-		Text(uiState.wordList.toString())
+	if (uiState.wordList.isNotEmpty()) {
 
-		LazyColumn(
-			modifier = Modifier
-				.padding(8.dp)
-				.fillMaxWidth()
-				.height(150.dp)
-		) {
-			itemsIndexed(
-				items = uiState.wordList
-			) { index, word ->
-				viewModel.getDefinition(word)
+		Column {
+//			Text(uiState.currentWord)
+//			Text(uiState.wordList.toString())
+
+			LazyVerticalGrid(
+				columns = GridCells.Adaptive(minSize = 100.dp),
+				verticalArrangement = Arrangement.spacedBy(3.dp),
+				horizontalArrangement = Arrangement.spacedBy(3.dp),
+				modifier = Modifier
+					.padding(8.dp)
+					.fillMaxWidth()
+					.height(150.dp)
+			) {
+				items(uiState.wordList.toList().sortedWith(String.CASE_INSENSITIVE_ORDER)) { word ->
+					WordBox(
+						word = word,
+						onClick = {}    // todo
+					)
+				}
 			}
 		}
 	}

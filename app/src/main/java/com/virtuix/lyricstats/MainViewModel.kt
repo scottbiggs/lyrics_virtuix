@@ -163,16 +163,21 @@ class MainViewModel(
 			val lyrics = response.lyrics
 			Log.d(TAG,"Raw lyrics: $lyrics")
 
-			// finally process the lyrics!
-			if (_uiState.value.processChoice) {
-				findMostCommonWord(lyrics)
-			}
-			else {
-				findLongestWord(lyrics)
-			}
+			_uiState.update { it.copy(
+				wordList = getWordsFromString(lyrics),
+				thinking = false
+			) }
 
-			// processing has finally finished
-			_uiState.update { it.copy(thinking = false) }
+//			// finally process the lyrics!
+//			if (_uiState.value.processChoice) {
+//				findMostCommonWord(lyrics)
+//			}
+//			else {
+//				findLongestWord(lyrics)
+//			}
+
+//			// processing has finally finished
+//			_uiState.update { it.copy(thinking = false) }
 		}
 	}
 
@@ -191,8 +196,14 @@ class MainViewModel(
 
 
 	/**
-	 * Given a string the probably contains a bunch of words, extract
+	 * Given a string that probably contains a bunch of words, extract
 	 * all the words from it.
+	 *
+	 * @param	bigString		A string that probably has lots of words in it.
+	 * 							Can be big.
+	 *
+	 * @param	filter			When true, filter out prepositions, articles,
+	 * 							and interjections.  Defaults to false.
 	 *
 	 * NOTE
 	 * 		Some things that we don't normally call words will be
@@ -200,32 +211,45 @@ class MainViewModel(
 	 * 		characters, and more will be considered a word by this
 	 * 		function.
 	 */
-	private fun getWordsFromString(bigString : String) : List<String> {
-		return bigString.split("\\s+".toRegex()).map { word ->
+	private suspend fun getWordsFromString(bigString : String, filter : Boolean = false) : Set<String> {
+		val wordList = bigString.split("\\s+".toRegex()).map { word ->
 			word.replace("""^[,\.]|[,\.]$""".toRegex(), "")
 		}
+
+		// convert to set, eliminating repeated words
+		val wordSet = wordList.toMutableSet()
+
+		if (filter) {
+			for (word in wordSet) {
+				if (wordFilter.shouldBeFiltered(word)) {
+					wordSet.remove(word)
+				}
+			}
+		}
+
+		return wordSet
 	}
 
 
 	/**
 	 * Only called within the coroutine that is looking up & processing the word.
 	 */
-	private suspend fun findLongestWord(lyrics: String) {
-
-		val longestWord = getWordsFromString(lyrics).reduce { longest, current ->
-			if ((current.length > longest.length) and
-				(current.contains("---") == false) and
-				(wordFilter.unfiltered(current)))
-				current
-			else
-				longest
-		}
-
-		Log.i(TAG, "findLongestWord() -> $longestWord")
-
-		currentWord = longestWord
-		_uiState.update { it.copy(definition = getDefinition(longestWord)) }
-	}
+//	private suspend fun findLongestWord(lyrics: String) {
+//
+//		val longestWord = getWordsFromString(lyrics).reduce { longest, current ->
+//			if ((current.length > longest.length) and
+//				(current.contains("---") == false) and
+//				(wordFilter.unfiltered(current)))
+//				current
+//			else
+//				longest
+//		}
+//
+//		Log.i(TAG, "findLongestWord() -> $longestWord")
+//
+//		currentWord = longestWord
+//		_uiState.update { it.copy(definition = getDefinition(longestWord)) }
+//	}
 
 
 	/**
@@ -238,48 +262,48 @@ class MainViewModel(
 	 * 		_uiState.currentWord	Will hold the most commonly used
 	 * 								word in the given lyrics.
 	 */
-	private fun findMostCommonWord(lyrics: String) {
-
-		//
-		// method:
-		// 		- create a list of all the words
-		//		- turn the list into a hashmap where the
-		//		  value is the number of times a word appears
-		//		- find the word (which is the key) with the greatest value
-		//
-		//	O(n) speed (unless the hash function is really bad, which'll make it O(n^2))
-		//	O(n) size
-
-		// grab all the words and filter out the articles, preps, and interjections.
-		val wordList = getWordsFromString(lyrics).filter { word ->
-			wordFilter.unfiltered(word)
-		}
-
-		val hashMap = mutableMapOf<String, Int>()
-		for (word in wordList) {
-			if (hashMap.containsKey(word)) {
-				hashMap.put(word, hashMap.getValue(word) + 1)
-			}
-			else {
-				hashMap.put(word, 1)
-			}
-		}
-
-		var mostCommonWord = ""
-		var mostCommonWordCount = 0
-
-		for ((key, value) in hashMap) {
-			if (value > mostCommonWordCount) {
-				mostCommonWord = key
-				mostCommonWordCount = value
-			}
-		}
-
-		// save this (side effect!) in our flow
-		Log.i(TAG, "findMostCommonWord() -> $mostCommonWord")
-		currentWord = mostCommonWord
-		_uiState.update { it.copy(definition = getDefinition(mostCommonWord)) }
-	}
+//	private fun findMostCommonWord(lyrics: String) {
+//
+//		//
+//		// method:
+//		// 		- create a list of all the words
+//		//		- turn the list into a hashmap where the
+//		//		  value is the number of times a word appears
+//		//		- find the word (which is the key) with the greatest value
+//		//
+//		//	O(n) speed (unless the hash function is really bad, which'll make it O(n^2))
+//		//	O(n) size
+//
+//		// grab all the words and filter out the articles, preps, and interjections.
+//		val wordList = getWordsFromString(lyrics).filter { word ->
+//			wordFilter.unfiltered(word)
+//		}
+//
+//		val hashMap = mutableMapOf<String, Int>()
+//		for (word in wordList) {
+//			if (hashMap.containsKey(word)) {
+//				hashMap.put(word, hashMap.getValue(word) + 1)
+//			}
+//			else {
+//				hashMap.put(word, 1)
+//			}
+//		}
+//
+//		var mostCommonWord = ""
+//		var mostCommonWordCount = 0
+//
+//		for ((key, value) in hashMap) {
+//			if (value > mostCommonWordCount) {
+//				mostCommonWord = key
+//				mostCommonWordCount = value
+//			}
+//		}
+//
+//		// save this (side effect!) in our flow
+//		Log.i(TAG, "findMostCommonWord() -> $mostCommonWord")
+//		currentWord = mostCommonWord
+//		_uiState.update { it.copy(definition = getDefinition(mostCommonWord)) }
+//	}
 
 
 	/**
