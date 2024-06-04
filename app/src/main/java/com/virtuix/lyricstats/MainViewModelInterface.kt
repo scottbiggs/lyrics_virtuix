@@ -1,5 +1,7 @@
 package com.virtuix.lyricstats
 
+import androidx.compose.ui.text.AnnotatedString
+
 interface MainViewModelInterface {
 	fun updateArtist(artist: String)
 	fun updateSongTitle(songTitle: String)
@@ -15,4 +17,14 @@ interface MainViewModelInterface {
 	 * 								this should be false. Defaults to true.
 	 */
 	fun processError(wasErrorHandled: Boolean = true)
+
+	/**
+	 * Looks up the definition of the given word.
+	 *
+	 * side effect
+	 * 		The definition will be stored in [MainUiState.definition].
+	 * 		This should cause recomposition.
+	 */
+	fun getDefinition(word: String) : AnnotatedString
+
 }

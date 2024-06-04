@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import com.virtuix.lyricstats.apis.dictionary.DictionaryApiClient
 import com.virtuix.lyricstats.apis.dictionary.DictionaryApiInterface
+import com.virtuix.lyricstats.apis.dictionary.DictionaryEntry
 import com.virtuix.lyricstats.apis.lyric.LyricApiInterface
 import com.virtuix.lyricstats.apis.lyric.LyricApiClient
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import retrofit2.Response
 import java.net.SocketTimeoutException
 
 
@@ -236,7 +238,7 @@ class MainViewModel(
 	 * 		_uiState.currentWord	Will hold the most commonly used
 	 * 								word in the given lyrics.
 	 */
-	private suspend fun findMostCommonWord(lyrics: String) {
+	private fun findMostCommonWord(lyrics: String) {
 
 		//
 		// method:
@@ -284,35 +286,41 @@ class MainViewModel(
 	 * Finds the definition of a word.
 	 *
 	 * side effects
+	 * 		uiState.definition		Updated to hold this new definition.
+	 * 								This should cause a recomposition.
 	 *
 	 * @return	The most common (first) definition of the word.
-	 * 			Empty string if no definition can be found.
+	 * 			Just the word is no definition is found.
 	 *
-	 * NOTE:  Uses the dictionaryapi.dev, so this needs to be called
-	 * within a coroutine to avoid blocking the main thread.
+	 * 	NOTE
+	 * 		This works in a coroutine off the main thread.
 	 */
-	private suspend fun getDefinition(word : String) : AnnotatedString {
+	override fun getDefinition(word : String) : AnnotatedString {
 
-		val response = try {
-			dictApi.dictLookup(word)
-		}
-		catch (e : Exception) {
-			_errState.update {
-				it.copy(
-					errType = ErrStateType.NONE,
-					errState = true,
-					errMsgId = R.string.dictionary_server_problem,
-				)
+		// default is just the word--no definition (handled error cases)
+		var definition = AnnotatedString(word)
+
+		ioScope.launch {
+			val response = try {
+				dictApi.dictLookup(word)
 			}
 
-			// finish processing and exit
-			_uiState.update { it.copy(thinking = false) }
-			return AnnotatedString("")
-		}
+			catch (e : Exception) {
+				_errState.update {
+					it.copy(
+						errType = ErrStateType.NONE,
+						errState = true,
+						errMsgId = R.string.dictionary_server_problem,
+					)
+				}
 
-		if (response.isSuccessful) {
-			val responseList = response.body()
-			if (responseList != null) {
+				// finish processing and exit
+				_uiState.update { it.copy(thinking = false) }
+			} as Response<List<DictionaryEntry>>
+
+
+			if (response.isSuccessful) {
+				val responseList = response.body() as List<DictionaryEntry>
 				Log.v(TAG, "dictionary -> ${responseList}")
 
 				//
@@ -361,33 +369,22 @@ class MainViewModel(
 						append("\n")
 					}
 				}
-				return fullDef
+				definition = fullDef
 			}
-
 			else {
-				// we got a successful response but no body.
+				// Could not find in dictionary api
 				_errState.update {
 					it.copy(
-						errType = ErrStateType.NONE,
+						errType = ErrStateType.WORD,
 						errState = true,
-						errMsgId = R.string.dictionary_server_problem,
+						errMsgId = R.string.not_a_word,
+						word = word
 					)
 				}
 			}
 		}
-		else {
-			// Could not find in dictionary api
-			_errState.update {
-				it.copy(
-					errType = ErrStateType.WORD,
-					errState = true,
-					errMsgId = R.string.not_a_word,
-					word = word
-				)
-			}
-		}
 
-		return AnnotatedString(word)
+		return definition
 	}
 
 }

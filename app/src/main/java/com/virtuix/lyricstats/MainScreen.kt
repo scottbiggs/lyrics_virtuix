@@ -1,5 +1,6 @@
 package com.virtuix.lyricstats
 
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -10,8 +11,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -25,10 +29,13 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleCoroutineScope
 import com.virtuix.lyricstats.ui.theme.LyricStatsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,19 +57,7 @@ object MainScreen {
 		LyricStatsTheme {
 
 			// display any necessary toasts
-			if (errState.errState) {
-				val ctx = LocalContext.current
-
-				// error happened.
-				if (errState.errDescId != 0) {
-					Log.e(TAG, errState.getDescString(ctx))
-				}
-				if (errState.errMsgId != 0) {
-					Toast.makeText(ctx, errState.getMsgString(ctx), Toast.LENGTH_LONG).show()
-				}
-				viewModel.processError(true)	// recompose without error
-			}
-
+			displayErr(viewModel, errState)
 
 			Column(
 				modifier = Modifier
@@ -70,41 +65,10 @@ object MainScreen {
 					.verticalScroll(rememberScrollState())
 			) {
 
-				//
-				// artist textfield
-				//
-				TextField(
-					value = uiState.artist,
-					onValueChange = {
-						viewModel.updateArtist(it)
-					},
-					label = {
-						Text(stringResource(R.string.artist))
-					},
-					placeholder = {
-						Text(stringResource(R.string.artist))
-					},
-					singleLine = true,
-					modifier = Modifier
-						.fillMaxWidth()
-						.padding(8.dp)
-				)
+				ArtistTextField(viewModel, uiState)
 
-				//
-				// title textfield
-				//
-				TextField(
-					value = uiState.songTitle,
-					onValueChange = {
-						viewModel.updateSongTitle(it)
-					},
-					label = { Text(stringResource(R.string.song_title)) },
-					placeholder = { Text(text = stringResource(id = R.string.song_title)) },
-					modifier = Modifier
-						.fillMaxWidth()
-						.padding(all = 8.dp)
-				)
-
+				TitleTextField(viewModel, uiState)
+/*
 				//
 				// switch between display longest word or most common word
 				//
@@ -182,52 +146,149 @@ object MainScreen {
 					)
 
 				}
+*/
 
-				//
-				// button to process the artist & title entries
-				//
-				Button(
-					onClick = {
-						keyboardController?.hide()
-						viewModel::lookUpAndProcessLyrics.invoke()
-					},
-					modifier = Modifier
-						.fillMaxWidth()
-						.padding(all = 8.dp)
-				) {
-					Text(text = stringResource(id = R.string.look_up_and_process_lyrics))
+				ProcessButton(viewModel, keyboardController)
+
+				if (uiState.thinking) {
+					ThinkingSpinner()
 				}
-
-				//
-				// current word and definition
-				//	- only show when the conditions are just right
-				//
-				if (uiState.thinking == false) {
-					Text(
-						uiState.definition,
-						modifier = Modifier
-							.fillMaxWidth()
-							.padding(all = 8.dp)
-					)
+				else {
+					WordList(viewModel, uiState)
+					ShowWordAndDefinition(uiState)
 				}
 
 			}
 
-			// Show the spinner while thinking
-			if (uiState.thinking) {
-				Box(
-					modifier = Modifier.fillMaxSize(),
-					contentAlignment = Alignment.Center,
-				) {
-					CircularProgressIndicator(
-						modifier = Modifier.width(64.dp),
-						color = MaterialTheme.colorScheme.tertiary,
-					)
-				}
+		}
+	}
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ArtistTextField(viewModel: MainViewModelInterface, uiState: MainUiState) {
+
+	TextField(
+		value = uiState.artist,
+		onValueChange = {
+			viewModel.updateArtist(it)
+		},
+		label = {
+			Text(stringResource(R.string.artist))
+		},
+		placeholder = {
+			Text(stringResource(R.string.artist))
+		},
+		singleLine = true,
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(8.dp)
+	)
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TitleTextField(viewModel: MainViewModelInterface, uiState: MainUiState) {
+	TextField(
+		value = uiState.songTitle,
+		onValueChange = {
+			viewModel.updateSongTitle(it)
+		},
+		label = { Text(stringResource(R.string.song_title)) },
+		placeholder = { Text(text = stringResource(id = R.string.song_title)) },
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(all = 8.dp)
+	)
+}
+
+@Composable
+fun ProcessButton(viewModel: MainViewModelInterface, keyboardController: SoftwareKeyboardController?) {
+	Button(
+		onClick = {
+			keyboardController?.hide()
+			viewModel::lookUpAndProcessLyrics.invoke()
+		},
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(all = 8.dp)
+	) {
+		Text(text = stringResource(id = R.string.look_up_and_process_lyrics))
+	}
+}
+
+@Composable
+fun ThinkingSpinner() {
+	Box(
+		modifier = Modifier.fillMaxSize(),
+		contentAlignment = Alignment.Center,
+	) {
+		CircularProgressIndicator(
+			modifier = Modifier.width(64.dp),
+			color = MaterialTheme.colorScheme.tertiary,
+		)
+	}
+}
+
+@Composable
+fun ShowWordAndDefinition(uiState : MainUiState) {
+	if (uiState.definition.isNotBlank()) {
+		Text(
+			uiState.definition,
+			color = MaterialTheme.colorScheme.onPrimaryContainer,
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(all = 8.dp)
+				.background(MaterialTheme.colorScheme.primaryContainer)
+				.padding(all = 12.dp)
+		)
+	}
+}
+
+/**
+ * Displays list of all the words in the selected song.
+ * Each word is clickable.  Once clicked, a definition of
+ * that word is displayed.
+ */
+@Composable
+fun WordList(viewModel: MainViewModelInterface, uiState: MainUiState) {
+
+	if (uiState.currentWord.isNotBlank()) {
+
+		Text(uiState.wordList.toString())
+
+		LazyColumn(
+			modifier = Modifier
+				.padding(8.dp)
+				.fillMaxWidth()
+				.height(150.dp)
+		) {
+			itemsIndexed(
+				items = uiState.wordList
+			) { index, word ->
+				viewModel.getDefinition(word)
 			}
 		}
 	}
 }
 
+
+@Composable
+fun displayErr(viewModel: MainViewModelInterface, errState: ErrState) {
+	if (errState.errState) {
+		val ctx = LocalContext.current
+
+		// error happened.
+		if (errState.errDescId != 0) {
+			Log.e(TAG, errState.getDescString(ctx))
+		}
+		if (errState.errMsgId != 0) {
+			Toast.makeText(ctx, errState.getMsgString(ctx), Toast.LENGTH_LONG).show()
+		}
+		viewModel.processError(true)	// recompose without error
+	}
+}
 
 private const val TAG = "MainScreen"
