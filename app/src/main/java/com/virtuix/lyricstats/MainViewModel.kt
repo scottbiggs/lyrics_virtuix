@@ -109,7 +109,11 @@ class MainViewModel(
 		ioScope.launch {
 
 			// signal that processing has begun
-			_uiState.update { it.copy(thinking = true) }
+			_uiState.update { it.copy(
+				thinking = true,
+				currentWord = "",
+				definition = AnnotatedString("")
+			) }
 
 			val response = try {
 				lyricApi.lyrics(
@@ -313,20 +317,16 @@ class MainViewModel(
 	 * 		uiState.definition		Updated to hold this new definition.
 	 * 								This should cause a recomposition.
 	 *
-	 * @return	The most common (first) definition of the word.
-	 * 			Just the word is no definition is found.
-	 *
 	 * 	NOTE
 	 * 		This works in a coroutine off the main thread.
 	 */
-	override fun getDefinition(word : String) : AnnotatedString {
+	override fun getDefinition(word : String) {
 
-		// default is just the word--no definition (handled error cases)
-		var definition = AnnotatedString(word)
+		Log.d(TAG, "begin getDefinition($word)")
 
 		ioScope.launch {
 			val response = try {
-				dictApi.dictLookup(word)
+				dictApi.dictLookup(word.lowercase())
 			}
 
 			catch (e : Exception) {
@@ -393,7 +393,7 @@ class MainViewModel(
 						append("\n")
 					}
 				}
-				definition = fullDef
+				_uiState.update { it.copy(definition = fullDef) }
 			}
 			else {
 				// Could not find in dictionary api
@@ -407,8 +407,6 @@ class MainViewModel(
 				}
 			}
 		}
-
-		return definition
 	}
 
 }

@@ -145,6 +145,8 @@ object MainScreen {
 
 				ProcessButton(viewModel, keyboardController)
 
+				// todo: put filter switch here
+
 				if (uiState.thinking) {
 					ThinkingSpinner()
 				}
@@ -229,7 +231,10 @@ fun ThinkingSpinner() {
 
 @Composable
 fun ShowWordAndDefinition(uiState : MainUiState) {
+	val ctx = LocalContext.current
+
 	if (uiState.definition.isNotBlank()) {
+		Log.d(TAG, "uiState.definition = ${uiState.definition}")
 		Text(
 			uiState.definition,
 			color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -240,6 +245,9 @@ fun ShowWordAndDefinition(uiState : MainUiState) {
 				.padding(all = 12.dp)
 		)
 	}
+//	else {
+//		Toast.makeText(ctx, "Hmmm, uiState.definition is black!", Toast.LENGTH_SHORT).show()
+//	}
 }
 
 /**
@@ -250,6 +258,7 @@ fun ShowWordAndDefinition(uiState : MainUiState) {
 @Composable
 fun ShowWordList(viewModel: MainViewModelInterface, uiState: MainUiState) {
 
+	val ctx = LocalContext.current
 //	Log.d(TAG, "word -> ${uiState.currentWord}")
 //	Log.d(TAG, "word list -> ${uiState.wordList}")
 
@@ -271,7 +280,9 @@ fun ShowWordList(viewModel: MainViewModelInterface, uiState: MainUiState) {
 				items(uiState.wordList.toList().sortedWith(String.CASE_INSENSITIVE_ORDER)) { word ->
 					WordBox(
 						word = word,
-						onClick = {}    // todo
+						onClick = {
+							viewModel.getDefinition(word)
+						}
 					)
 				}
 			}

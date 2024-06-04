@@ -25,6 +25,6 @@ interface MainViewModelInterface {
 	 * 		The definition will be stored in [MainUiState.definition].
 	 * 		This should cause recomposition.
 	 */
-	fun getDefinition(word: String) : AnnotatedString
+	fun getDefinition(word: String)
 
 }
