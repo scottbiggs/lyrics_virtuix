@@ -65,7 +65,6 @@ This is the only time i really feel alive
 """
 	}
 
-	private val lyricApp = mock<LyricAppInterface>()
 	private val lyricApi = mock<LyricApiInterface>()
 	private val response = LyricResponse(lyrics = LYRICS)
 	private val subject = MainViewModel(lyricApi = lyricApi)
@@ -103,8 +102,9 @@ This is the only time i really feel alive
 		verify(lyricApi).lyrics(artist = ARTIST, songTitle = SONG_TITLE)
 	}
 
+
 	@Test
-	fun `lookUpAndProcessLyrics() processes the lyrics and find the longest word`() = runTest {
+	fun `lookUpAndProcessLyrics() makes a list of the words in the lyrics in lowercase`() = runTest {
 		val subject = MainViewModel(lyricApi = lyricApi, ioDispatcher = StandardTestDispatcher(testScheduler))
 		subject.updateArtist(artist = ARTIST)
 		subject.updateSongTitle(songTitle = SONG_TITLE)
@@ -112,6 +112,11 @@ This is the only time i really feel alive
 		subject.lookUpAndProcessLyrics()
 		advanceUntilIdle()
 
-		assertEquals("everything", subject.uiState.value.currentWord)
+		assert(subject.uiState.value.wordList.contains("messed".lowercase()))
+		assert(subject.uiState.value.wordList.contains("Heaven".lowercase()))
+		assert(subject.uiState.value.wordList.contains("Paroles".lowercase()))
+		assert(subject.uiState.value.wordList.contains("benzene".lowercase()) == false)
+		assert(subject.uiState.value.wordList.contains("".lowercase()) == false)
 	}
+
 }
