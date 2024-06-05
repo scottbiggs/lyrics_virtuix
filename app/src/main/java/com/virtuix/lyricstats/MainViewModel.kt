@@ -235,16 +235,13 @@ class MainViewModel(
 	 * @param	bigString		A string that probably has lots of words in it.
 	 * 							Can be big.
 	 *
-	 * @param	filter			When true, filter out prepositions, articles,
-	 * 							and interjections.  Defaults to false.
-	 *
 	 * NOTE
 	 * 		Some things that we don't normally call words will be
 	 * 		included in this list.  Numbers, strings of non-alphanumeric
 	 * 		characters, and more will be considered a word by this
 	 * 		function.
 	 */
-	private fun getWordsFromString(bigString : String, filter : Boolean = false) : Set<String> {
+	private fun getWordsFromString(bigString : String) : Set<String> {
 		val wordList = bigString.split("\\s+".toRegex()).map { word ->
 			word.replace("""^[,\.]|[,\.]$""".toRegex(), "").filter { it.isLetterOrDigit() }.lowercase()
 		}
@@ -287,7 +284,7 @@ class MainViewModel(
 
 			if (response.isSuccessful) {
 				val responseList = response.body() as List<DictionaryEntry>
-				Log.v(TAG, "dictionary -> ${responseList}")
+				Log.v(TAG, "dictionary -> $responseList")
 
 
 				val fullDef = buildDefinition(word, responseList)

@@ -55,15 +55,4 @@ class MainScreenTest {
 		verify(viewModel).lookUpAndProcessLyrics()
 	}
 
-
-	@Test
-	fun userCanSelectWord() {
-		testRule.setContent {
-			MainScreen.Screen(viewModel = viewModel, uiState = uiState, errState = errState)
-		}
-
-		// todo: test all the buttons
-//		testRule.on
-	}
-
 }

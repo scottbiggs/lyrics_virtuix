@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import com.virtuix.lyricstats.ui.WordBox
 import com.virtuix.lyricstats.ui.theme.LyricStatsTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 object MainScreen {
 
 	@Composable
@@ -55,7 +53,7 @@ object MainScreen {
 		LyricStatsTheme {
 
 			// display any necessary toasts
-			displayErr(viewModel, errState)
+			DisplayErr(viewModel, errState)
 
 			if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
 				PortraitUI(viewModel, uiState, keyboardController)
@@ -224,15 +222,9 @@ fun ShowWordAndDefinition(uiState : MainUiState) {
 @Composable
 fun ShowWordList(viewModel: MainViewModelInterface, uiState: MainUiState) {
 
-	val ctx = LocalContext.current
-//	Log.d(TAG, "word -> ${uiState.currentWord}")
-//	Log.d(TAG, "word list -> ${uiState.wordList}")
-
 	if (uiState.wordList.isNotEmpty()) {
 
 		Column {
-//			Text(uiState.currentWord)
-//			Text(uiState.wordList.toString())
 
 			LazyVerticalGrid(
 				columns = GridCells.Adaptive(minSize = 100.dp),
@@ -258,7 +250,7 @@ fun ShowWordList(viewModel: MainViewModelInterface, uiState: MainUiState) {
 
 
 @Composable
-fun displayErr(viewModel: MainViewModelInterface, errState: ErrState) {
+fun DisplayErr(viewModel: MainViewModelInterface, errState: ErrState) {
 	if (errState.errState) {
 		val ctx = LocalContext.current
 
