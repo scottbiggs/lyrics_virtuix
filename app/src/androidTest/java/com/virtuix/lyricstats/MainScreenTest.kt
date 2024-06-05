@@ -55,6 +55,7 @@ class MainScreenTest {
 		verify(viewModel).lookUpAndProcessLyrics()
 	}
 
+
 	@Test
 	fun userCanSelectWord() {
 		testRule.setContent {
@@ -64,4 +65,5 @@ class MainScreenTest {
 		// todo: test all the buttons
 //		testRule.on
 	}
+
 }
