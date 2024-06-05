@@ -243,7 +243,10 @@ class MainViewModel(
 	 */
 	private fun getWordsFromString(bigString : String) : Set<String> {
 		val wordList = bigString.split("\\s+".toRegex()).map { word ->
-			word.replace("""^[,\.]|[,\.]$""".toRegex(), "").filter { it.isLetterOrDigit() }.lowercase()
+			word.replace("""^[,\.]|[,\.]$""".toRegex(), "")
+				.filter {
+					it.isLetterOrDigit() or (it == '\'') or (it == '_')
+				}.lowercase()
 		}
 
 		// convert to set, eliminating repeated words
