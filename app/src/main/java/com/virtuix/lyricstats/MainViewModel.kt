@@ -7,7 +7,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
@@ -34,7 +33,6 @@ private const val TAG = "MainViewModel"
 class MainViewModel(
 	private val lyricApi: LyricApiInterface = LyricApiClient.lyricApi,
 	private val dictApi: DictionaryApiInterface = DictionaryApiClient.dictionaryApi,
-	private val lyricApp: LyricApp = LyricApp.instance,
 	ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel(), MainViewModelInterface {
 
@@ -50,12 +48,6 @@ class MainViewModel(
 
 	private val _errState = MutableStateFlow(ErrState(errType = ErrStateType.NONE, errState = false))
 	val errState: StateFlow<ErrState> = _errState.asStateFlow()
-
-	/** the word to display */
-	private var currentWord = ""
-
-	/** able to determine if a word is an article, preposition, or interjection */
-	private val wordFilter : FilteredWords by lazy { FilteredWords(lyricApp.getLyricAppContext()) }
 
 
 	//------------------------------------------
@@ -264,19 +256,7 @@ class MainViewModel(
 			wordSet.remove("")
 		}
 
-		if (filter) {
-			for (word in wordSet) {
-				if (wordFilter.shouldBeFiltered(word)) {
-					wordSet.remove(word)
-				}
-			}
-		}
-
 		return wordSet
-	}
-
-	private fun toLowerCase(stringList : List<String>) : List<String> {
-		return stringList.map { it.lowercase() }
 	}
 
 
