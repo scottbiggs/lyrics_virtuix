@@ -222,7 +222,7 @@ fun ShowWordAndDefinition(uiState : MainUiState) {
 @Composable
 fun ShowWordList(viewModel: MainViewModelInterface, uiState: MainUiState) {
 
-	if (uiState.wordList.isNotEmpty()) {
+	if (uiState.wordMap.isNotEmpty()) {
 
 		Column {
 
@@ -235,11 +235,12 @@ fun ShowWordList(viewModel: MainViewModelInterface, uiState: MainUiState) {
 					.fillMaxWidth()
 					.height(150.dp)
 			) {
-				items(uiState.wordList.toList().sortedWith(String.CASE_INSENSITIVE_ORDER)) { word ->
+				items(uiState.wordMap.toList()) { pair ->
 					WordBox(
-						word = word,
+						word = pair.first,
+						count = pair.second,
 						onClick = {
-							viewModel.getDefinition(word)
+							viewModel.getDefinition(pair.first)
 						}
 					)
 				}

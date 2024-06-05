@@ -100,7 +100,7 @@ class MainViewModel(
 			Log.v(TAG,"Raw lyrics: $lyrics")
 
 			_uiState.update { it.copy(
-				wordList = getWordsFromString(lyrics),
+				wordMap = getWordsFromString(lyrics),
 				thinking = false
 			) }
 		} // ioScope.launch
@@ -164,7 +164,12 @@ class MainViewModel(
 				errDescId = R.string.unknown_server_exception,
 			)
 		}
-		_uiState.update { it.copy(currentWord = "", definition = AnnotatedString(""), wordList = setOf()) }
+		_uiState.update {
+			it.copy(currentWord = "",
+				definition = AnnotatedString(""),
+				wordMap = hashMapOf()
+			)
+		}
 	}
 
 	private fun lyricsTimeoutException(e: Exception) {
@@ -176,7 +181,11 @@ class MainViewModel(
 				errMsgId = R.string.timeout
 			)
 		}
-		_uiState.update { it.copy(currentWord = "", definition = AnnotatedString(""), wordList = setOf()) }
+		_uiState.update {
+			it.copy(currentWord = "",
+				definition = AnnotatedString(""),
+				wordMap = hashMapOf())
+		}
 	}
 
 	private fun lyricsHttpException(e: Exception) {
@@ -190,7 +199,11 @@ class MainViewModel(
 				title = _uiState.value.songTitle
 			)
 		}
-		_uiState.update { it.copy(currentWord = "", definition = AnnotatedString(""), wordList = setOf()) }
+		_uiState.update {
+			it.copy(currentWord = "",
+				definition = AnnotatedString(""),
+				wordMap = hashMapOf())
+		}
 	}
 
 	private fun errorNoTitle() {
@@ -201,7 +214,7 @@ class MainViewModel(
 				errMsgId = R.string.invalid_title
 			)
 		}
-		_uiState.update { it.copy(currentWord = "", definition = AnnotatedString(""), wordList = setOf()) }
+		_uiState.update { it.copy(currentWord = "", definition = AnnotatedString(""), wordMap = hashMapOf()) }
 	}
 
 	private fun errorNoArtist() {
@@ -212,7 +225,7 @@ class MainViewModel(
 				errMsgId = R.string.invalid_artist
 			)
 		}
-		_uiState.update { it.copy(currentWord = "", definition = AnnotatedString(""), wordList = setOf()) }
+		_uiState.update { it.copy(currentWord = "", definition = AnnotatedString(""), wordMap = hashMapOf()) }
 	}
 
 	/**
@@ -235,13 +248,16 @@ class MainViewModel(
 	 * @param	bigString		A string that probably has lots of words in it.
 	 * 							Can be big.
 	 *
+	 * @return	A hashmap with all the unique strings and how many times each
+	 * 			appears.
+	 *
 	 * NOTE
 	 * 		Some things that we don't normally call words will be
 	 * 		included in this list.  Numbers, strings of non-alphanumeric
 	 * 		characters, and more will be considered a word by this
 	 * 		function.
 	 */
-	private fun getWordsFromString(bigString : String) : Set<String> {
+	private fun getWordsFromString(bigString : String) : Map<String, Int> {
 		val wordList = bigString.split("\\s+".toRegex()).map { word ->
 			word.replace("""^[,\.]|[,\.]$""".toRegex(), "")
 				.filter {
@@ -249,14 +265,23 @@ class MainViewModel(
 				}.lowercase()
 		}
 
-		// convert to set, eliminating repeated words
-		val wordSet = wordList.toMutableSet()
-
-		if (wordSet.contains("")) {
-			wordSet.remove("")
+		val wordHash = mutableMapOf<String, Int>()
+		for (word in wordList) {
+			if (wordHash.containsKey(word)) {
+				wordHash.put(word, wordHash.getValue(word) + 1)
+			}
+			else {
+				wordHash.put(word, 1)
+			}
 		}
 
-		return wordSet
+		// space is not considered a word
+		if (wordHash.containsKey("")) {
+			wordHash.remove("")
+		}
+
+		// sort alphabetically and finish
+		return wordHash.toMap().toSortedMap()
 	}
 
 

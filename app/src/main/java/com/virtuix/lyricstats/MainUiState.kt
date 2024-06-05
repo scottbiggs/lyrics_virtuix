@@ -17,8 +17,8 @@ import androidx.compose.ui.text.AnnotatedString
  *
  * @param	thinking			When True, the app is processing (could take a while).
  *
- * @param	wordList			Holds all the words in the given song.  Only valid when
- * 								thinking == false.  Defaults to empty list.
+ * @param	wordMap 			Holds all the unique words in the given song and its count.
+ * 								Only valid when thinking == false.  Defaults to empty list.
  */
 data class MainUiState(
 	val artist: String = "",
@@ -27,5 +27,5 @@ data class MainUiState(
 	val currentWord: String = "",
 	val definition: AnnotatedString = AnnotatedString(""),
 	val thinking: Boolean = false,
-	val wordList: Set<String> = setOf()
+	val wordMap: Map<String, Int> = mapOf()
 )

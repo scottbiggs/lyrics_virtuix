@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun WordBox(
     word : String,
+    count : Int,
     onClick: () -> Unit,
 ) {
     Log.d(TAG, "WordCard() word = $word")
@@ -27,7 +28,7 @@ fun WordBox(
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = word)
+        Text(text = "$word, $count")
     }
 
 }
