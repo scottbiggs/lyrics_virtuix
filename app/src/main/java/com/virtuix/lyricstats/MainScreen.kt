@@ -1,11 +1,14 @@
 package com.virtuix.lyricstats
 
+import android.content.res.Configuration
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +28,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -45,122 +49,88 @@ object MainScreen {
 
 		val keyboardController = LocalSoftwareKeyboardController.current
 
-		//-------------------
-		//	compose state stuff
-		//-------------------
+		val configuration = LocalConfiguration.current
+
 
 		LyricStatsTheme {
 
 			// display any necessary toasts
 			displayErr(viewModel, errState)
 
-			Column(
-				modifier = Modifier
-					.fillMaxSize()
-					.verticalScroll(rememberScrollState())
-			) {
-
-				ArtistTextField(viewModel, uiState)
-
-				TitleTextField(viewModel, uiState)
-/*
-				//
-				// switch between display longest word or most common word
-				//
-				Row(
-					modifier = Modifier.fillMaxWidth(),
-					horizontalArrangement = Arrangement.Center
-				) {
-
-					//
-					// text for the left side of switch (false): Longest Word
-					//
-					Text(
-						stringResource(R.string.longest_word),
-						color = MaterialTheme.colorScheme.onSecondary,
-						modifier =
-							if (uiState.processChoice) {
-								Modifier
-									.align(Alignment.CenterVertically)
-									.padding(4.dp)
-							}
-							else {
-								Modifier
-									.align(Alignment.CenterVertically)
-									.background(
-										MaterialTheme.colorScheme.secondary,
-										shape = RoundedCornerShape(3.dp)
-									)
-									.border(
-										2.dp,
-										MaterialTheme.colorScheme.secondary,
-										shape = RoundedCornerShape(3.dp)
-									)
-									.padding(4.dp)
-							}
-					)
-
-					//
-					// the switch itself
-					// checked = most used, unchecked = longest word (default)
-					//
-					Switch(
-						checked = uiState.processChoice,
-						modifier = Modifier
-							.padding(start = 8.dp, end = 8.dp),
-						onCheckedChange = {
-							viewModel.updateProcessChoice(it)
-						}
-					)
-
-					//
-					// text for right side of switch (true): Most Used Word
-					//
-					Text(
-						stringResource(R.string.most_used_word),
-						modifier =
-							if (uiState.processChoice) {
-								Modifier
-									.align(Alignment.CenterVertically)
-									.background(
-										MaterialTheme.colorScheme.primary,
-										shape = RoundedCornerShape(3.dp)
-									)
-									.border(
-										2.dp,
-										MaterialTheme.colorScheme.primary,
-										shape = RoundedCornerShape(3.dp)
-									)
-									.padding(4.dp)
-							}
-							else {
-								Modifier
-									.align(Alignment.CenterVertically)
-									.padding(4.dp)
-							}
-					)
-
-				}
-*/
-
-				ProcessButton(viewModel, keyboardController)
-
-				// todo: put filter switch here
-
-				if (uiState.thinking) {
-					ThinkingSpinner()
-				}
-				else {
-					ShowWordList(viewModel, uiState)
-					ShowWordAndDefinition(uiState)
-				}
-
+			if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+				PortraitUI(viewModel, uiState, keyboardController)
 			}
+			else {
+				LandscapeUI(viewModel, uiState, keyboardController, configuration.screenWidthDp)
+			}
+
 
 		}
 	}
 }
 
+@Composable
+fun LandscapeUI(
+	viewModel: MainViewModelInterface,
+	uiState: MainUiState,
+	keyboardController: SoftwareKeyboardController?,
+	screenSize: Int
+) {
+	Row(
+		modifier = Modifier
+			.fillMaxSize()
+	) {
+		Column(
+			Modifier.width((screenSize * 0.4).toInt().dp)
+		) {
+			ArtistTextField(viewModel = viewModel, uiState = uiState)
+			TitleTextField(viewModel = viewModel, uiState = uiState)
+			ProcessButton(viewModel = viewModel, keyboardController = keyboardController)
+			// todo: put filter switch here
+		}
+
+		Column(
+			Modifier.verticalScroll(rememberScrollState())
+		) {
+			if (uiState.thinking) {
+				ThinkingSpinner()
+			}
+			else {
+				ShowWordList(viewModel, uiState)
+				ShowWordAndDefinition(uiState)
+			}
+		}
+	}
+}
+
+
+
+@Composable
+fun PortraitUI(
+	viewModel: MainViewModelInterface,
+	uiState: MainUiState,
+	keyboardController: SoftwareKeyboardController?
+) {
+	Column(
+		Modifier
+			.fillMaxSize()
+			.verticalScroll(rememberScrollState())
+	) {
+		ArtistTextField(viewModel, uiState)
+		TitleTextField(viewModel, uiState)
+		ProcessButton(viewModel, keyboardController)
+
+		// todo: put filter switch here
+
+		if (uiState.thinking) {
+			ThinkingSpinner()
+		}
+		else {
+			ShowWordList(viewModel, uiState)
+			ShowWordAndDefinition(uiState)
+		}
+	}
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -208,7 +178,7 @@ fun ProcessButton(viewModel: MainViewModelInterface, keyboardController: Softwar
 			keyboardController?.hide()
 			viewModel::lookUpAndProcessLyrics.invoke()
 		},
-		modifier = Modifier
+		Modifier
 			.fillMaxWidth()
 			.padding(all = 8.dp)
 	) {
@@ -219,11 +189,11 @@ fun ProcessButton(viewModel: MainViewModelInterface, keyboardController: Softwar
 @Composable
 fun ThinkingSpinner() {
 	Box(
-		modifier = Modifier.fillMaxSize(),
+		Modifier.fillMaxSize(),
 		contentAlignment = Alignment.Center,
 	) {
 		CircularProgressIndicator(
-			modifier = Modifier.width(64.dp),
+			Modifier.width(64.dp).height(64.dp),
 			color = MaterialTheme.colorScheme.tertiary,
 		)
 	}
@@ -231,7 +201,6 @@ fun ThinkingSpinner() {
 
 @Composable
 fun ShowWordAndDefinition(uiState : MainUiState) {
-	val ctx = LocalContext.current
 
 	if (uiState.definition.isNotBlank()) {
 		Log.d(TAG, "uiState.definition = ${uiState.definition}")
@@ -245,9 +214,6 @@ fun ShowWordAndDefinition(uiState : MainUiState) {
 				.padding(all = 12.dp)
 		)
 	}
-//	else {
-//		Toast.makeText(ctx, "Hmmm, uiState.definition is black!", Toast.LENGTH_SHORT).show()
-//	}
 }
 
 /**
