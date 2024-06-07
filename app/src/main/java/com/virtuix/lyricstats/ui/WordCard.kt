@@ -28,7 +28,7 @@ fun WordBox(
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "$word, $count")
+        Text(text = "$word, $count", color = MaterialTheme.colorScheme.tertiaryContainer)
     }
 
 }
