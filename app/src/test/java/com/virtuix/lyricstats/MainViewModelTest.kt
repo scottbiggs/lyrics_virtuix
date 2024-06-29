@@ -112,11 +112,11 @@ This is the only time i really feel alive
 		subject.lookUpAndProcessLyrics()
 		advanceUntilIdle()
 
-		assert(subject.uiState.value.wordList.contains("messed".lowercase()))
-		assert(subject.uiState.value.wordList.contains("Heaven".lowercase()))
-		assert(subject.uiState.value.wordList.contains("Paroles".lowercase()))
-		assert(subject.uiState.value.wordList.contains("benzene".lowercase()) == false)
-		assert(subject.uiState.value.wordList.contains("".lowercase()) == false)
+		assert(subject.uiState.value.wordMap.contains("messed".lowercase()))
+		assert(subject.uiState.value.wordMap.contains("Heaven".lowercase()))
+		assert(subject.uiState.value.wordMap.contains("Paroles".lowercase()))
+		assert(subject.uiState.value.wordMap.contains("benzene".lowercase()) == false)
+		assert(subject.uiState.value.wordMap.contains("".lowercase()) == false)
 	}
 
 }
